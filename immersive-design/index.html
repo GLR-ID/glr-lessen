@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBO Traject Immersive Design • VR Development &amp; OpenXR • Grafisch Lyceum Rotterdam</title>
+    <style>
+        :root {
+            --glr-green: #a8e000;
+            --glr-green-glow: rgba(168, 224, 0, 0.25);
+            --glr-darkgreen: #7bb300;
+            --purple: #a855f7;
+            --cyan: #06b6d4;
+            --bg-page: #090b10;
+            --bg-card: #121622;
+            --bg-card-hover: #171d2d;
+            --border: #1f2638;
+            --text-title: #f8fafc;
+            --text-body: #94a3b8;
+            --text-white: #ffffff;
+            --tier-basis: #10b981;
+            --tier-gevorderd: #38bdf8;
+            --tier-expert: #a855f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: #090b10;
+            border-bottom: 2px solid var(--glr-green);
+            padding: 16px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .glr-logo {
+            display: inline-flex;
+            flex-direction: column;
+            background: #ffffff;
+            color: #000000;
+            padding: 3px 6px;
+            border: 2px solid #000000;
+            font-weight: 900;
+            font-size: 0.65rem;
+            line-height: 1.05;
+            letter-spacing: -0.2px;
+            text-transform: uppercase;
+        }
+
+        .glr-logo-green-bar {
+            background: var(--glr-green);
+            height: 5px;
+            width: 100%;
+            margin: 2px 0;
+            border: 1px solid #000000;
+        }
+
+        .brand-text h1 {
+            font-size: 1.25rem;
+            color: var(--text-white);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            color: var(--glr-green);
+            font-weight: 700;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-white);
+            border-color: var(--glr-green);
+        }
+
+        .badge-target {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 36px 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #121622 0%, #0d1017 100%);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--purple);
+            border-radius: 8px;
+            padding: 36px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .hero-tagline {
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #c084fc;
+        }
+
+        .hero-banner h2 {
+            font-size: 2.2rem;
+            color: var(--text-white);
+            font-weight: 900;
+            line-height: 1.15;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-banner p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            max-width: 860px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-cta-primary {
+            background: var(--glr-green);
+            color: #000000;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 900;
+            text-decoration: none;
+            font-size: 0.92rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.15s ease;
+            box-shadow: 0 0 15px var(--glr-green-glow);
+        }
+
+        .btn-cta-primary:hover {
+            background: #bbf011;
+            transform: translateY(-1px);
+        }
+
+        .btn-cta-secondary {
+            background: transparent;
+            color: var(--text-white);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: all 0.15s ease;
+        }
+
+        .btn-cta-secondary:hover {
+            border-color: #94a3b8;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #c084fc;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-title);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .stat-desc {
+            font-size: 0.8rem;
+            color: var(--text-body);
+            line-height: 1.4;
+        }
+
+        /* Section Titles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h3 {
+            font-size: 1.3rem;
+            color: var(--text-white);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .section-header span {
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        /* Grid Lessons */
+        .grid-lessons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .lesson-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .lesson-card:hover {
+            border-color: #334155;
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lesson-num {
+            font-size: 0.76rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c084fc;
+        }
+
+        .tag-pill {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+
+        .tag-nocode {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .tag-code {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .tag-vr {
+            background: rgba(6, 182, 212, 0.15);
+            color: #06b6d4;
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .lesson-card h4 {
+            font-size: 1.15rem;
+            color: var(--text-title);
+            margin: 8px 0 10px 0;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .lesson-card p {
+            font-size: 0.86rem;
+            line-height: 1.5;
+            color: var(--text-body);
+        }
+
+        .lesson-topics {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            list-style: none;
+        }
+
+        .lesson-topics li {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .lesson-topics li::before {
+            content: "->";
+            color: #c084fc;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 4px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-presentation {
+            background: #181d2a;
+            color: var(--glr-green);
+            border: 1px solid var(--border);
+            padding: 9px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-presentation:hover {
+            background: var(--glr-green);
+            color: #000000;
+            box-shadow: 0 0 12px var(--glr-green-glow);
+        }
+
+        .btn-guide {
+            background: #121622;
+            color: #ffffff;
+            border: 1px solid var(--border);
+            padding: 9px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-guide:hover {
+            background: #1e2638;
+            border-color: #475569;
+        }
+
+        /* Two Column Info Section */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .hero-banner h2 { font-size: 1.7rem; }
+        }
+
+        .info-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .info-panel h4 {
+            font-size: 1.05rem;
+            color: var(--text-white);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .info-panel ol, .info-panel ul {
+            padding-left: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
+        .info-panel li strong {
+            color: #f1f5f9;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            border-top: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        footer a {
+            color: var(--glr-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .lesson-card:has(.btn-locked) { opacity: 0.5; filter: grayscale(0.8); }
+        .lesson-card:has(.btn-locked):hover { transform: none; }
+        .btn-locked { display: flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 8px; border: 1px dashed #475569; color: #94a3b8; font-weight: 800; font-size: 0.85rem; cursor: not-allowed; user-select: none; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="brand-cluster">
+                <div class="glr-logo">
+                    <div>GRAFISCH<br>LYCEUM</div>
+                    <div class="glr-logo-green-bar"></div>
+                    <div>ROTTERDAM</div>
+                </div>
+                <div class="brand-text">
+                    <h1>MBO Traject Immersive Design</h1>
+                    <p>Unity 6 • VR Development &amp; OpenXR</p>
+                </div>
+            </div>
+            <div class="header-nav">
+                <a href="../index.html" class="nav-link">&larr; Hoofdportaal</a>
+                <span class="badge-target">VR &amp; XR Focus</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="hero-tagline">MBO Niveau 4 • Curriculum Overzicht</div>
+            <h2>Virtual Reality Ontwikkeling met Unity &amp; OpenXR</h2>
+            <p>Bouw interactieve VR-ervaringen met de industriestandaard XR Interaction Toolkit (XRI) en OpenXR. Leer spatial design, 6 DoF tracking, comfortabele verplaatsing, fysieke handinteracties en ruimtelijke audio. Ook in dit traject starten we in Les 1 <strong>volledig zonder code</strong> om eerst de wereldschaal, camera-opstelling en het fysieke speelveld in te richten.</p>
+            <div class="hero-actions">
+                <a href="presentation_les1.html" class="btn-cta-primary">Start Direct: Les 1 Slides &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Key Trajectory Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">6 DoF</div>
+                <div class="stat-label">Headset &amp; Controllers</div>
+                <div class="stat-desc">Positie en rotatie via OpenXR Input Actions.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">90 FPS</div>
+                <div class="stat-label">Framerate Budget</div>
+                <div class="stat-desc">11.1ms frame-tijd ter preventie van bewegingsziekte.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">XRI 3.x</div>
+                <div class="stat-label">XR Interaction Toolkit</div>
+                <div class="stat-desc">Direct Interactors, Ray, Sockets en Haptics.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">OpenXR</div>
+                <div class="stat-label">Universal Runtime</div>
+                <div class="stat-desc">PCVR en standalone Meta Quest APK export.</div>
+            </div>
+        </div>
+
+        <!-- Curriculum Breakdown -->
+        <div>
+            <div class="section-header">
+                <h3>Het Lesprogramma: 5 Lessen</h3>
+                <span>Klik op Presentatie voor klassikale slides of Handleiding voor het lesdocument</span>
+            </div>
+
+            <div class="grid-lessons">
+                <!-- Les 1 -->
+                <div class="lesson-card">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Les 01</span>
+                            <span class="tag-pill tag-nocode">0 Code</span>
+                        </div>
+                        <h4>VR Wereldbouw, Schaal &amp; XR Origin</h4>
+                        <p>De Unity VR werkruimte inrichten, 1 eenheid = 1 meter schaalverhouding, de XR Origin rig opbouwen en fysieke objecten testen.</p>
+                        <ul class="lesson-topics">
+                            <li>OpenXR plugin configuratie en XR Interaction Toolkit</li>
+                            <li>Ruimtelijke schaalverhouding (1 Unity Unit = 1 Meter)</li>
+                            <li>XR Origin (XR Rig), Camera Offset en Main Camera</li>
+                            <li>Tracked Pose Driver en controller tracking op 6 DoF</li>
+                            <li>Fysieke speelruimte afbakenen met Static Colliders</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn-presentation" href="presentation_les1.html">Presentatie</a>
+                    </div>
+                </div>
+
+                <!-- Les 2 -->
+                <div class="lesson-card">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Les 02</span>
+                            <span class="tag-pill tag-code">Input &amp; Locomotion</span>
+                        </div>
+                        <h4>VR Input, Locomotion &amp; Comfort Modes</h4>
+                        <p>Controller input uitlezen via Input Actions, continuous move vs teleporteren, snap turning en comfort vignettes tegen bewegingsziekte.</p>
+                        <ul class="lesson-topics">
+                            <li>Locomotion Mediator en XR Interaction Provider</li>
+                            <li>Teleportation Provider, Teleportation Area en Anchors</li>
+                            <li>Continuous Move Provider vs Snap Turn Provider</li>
+                            <li>Tunneling Vignette tegen VR-bewegingsziekte</li>
+                            <li>C# script voor dynamisch schakelen tussen comfortmodi</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <span class="btn-locked">&#128274; Binnenkort</span>
+                    </div>
+                </div>
+
+                <!-- Les 3 -->
+                <div class="lesson-card">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Les 03</span>
+                            <span class="tag-pill tag-code">Fysieke Interactie</span>
+                        </div>
+                        <h4>Directe VR Interactie, Sockets &amp; Haptics</h4>
+                        <p>Virtuele objecten vastpakken en gooien, grip-oriëntatie fixeren met Attach Transforms, haptic triggers en socket snap-systemen.</p>
+                        <ul class="lesson-topics">
+                            <li>XR Direct Interactor vs XR Ray Interactor</li>
+                            <li>XR Grab Interactable: Movement Types (Velocity vs Kinematic)</li>
+                            <li>Attach Transform voor realistische handpositie</li>
+                            <li>XRSocketInteractor voor docking en sleutel-slot mechanica</li>
+                            <li>Haptic feedback triggers via C# (controller trilling)</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <span class="btn-locked">&#128274; Binnenkort</span>
+                    </div>
+                </div>
+
+                <!-- Les 4 -->
+                <div class="lesson-card">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Les 04</span>
+                            <span class="tag-pill tag-code">Spatial UI &amp; Audio</span>
+                        </div>
+                        <h4>Ruimtelijke VR UI &amp; Spatial Audio</h4>
+                        <p>Geen schermen op het oog: World Space UI dashboards, laseraanwijzers met Raycast filtering en binaural 3D HRTF geluid.</p>
+                        <ul class="lesson-topics">
+                            <li>World Space Canvas instellen met correcte VR-schaal</li>
+                            <li>TrackedDeviceRaycaster en XR UI Input Module</li>
+                            <li>Interactieve knoppen en sliders bedienen met laserstraal</li>
+                            <li>AudioListener op de VR Main Camera plaatsen</li>
+                            <li>3D Spatial Blend, Logarithmic Rolloff en HRTF ruimtelijk geluid</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <span class="btn-locked">&#128274; Binnenkort</span>
+                    </div>
+                </div>
+
+                <!-- Les 5 -->
+                <div class="lesson-card">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Les 05</span>
+                            <span class="tag-pill tag-vr">Performance &amp; Build</span>
+                        </div>
+                        <h4>VR Performance, Comfort &amp; OpenXR Build</h4>
+                        <p>Strikte framerate budgets bewaken, Single Pass Instanced rendering, draw calls reduceren en compileren naar PCVR of Meta Quest.</p>
+                        <ul class="lesson-topics">
+                            <li>Framerate eisen: 72/90 FPS (11.1ms frame-tijd budget)</li>
+                            <li>Single Pass Instanced stereo rendering</li>
+                            <li>Occlusion Culling, Static Batching en Light baking</li>
+                            <li>Unity Profiler en XR Profiler metrics analyseren</li>
+                            <li>OpenXR PCVR standalone build en Meta Quest Android APK</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <span class="btn-locked">&#128274; Binnenkort</span>
+                    </div>
+                </div>
+
+                <!-- Architectuur Card -->
+                <div class="lesson-card" style="border-left: 4px solid #c084fc;">
+                    <div>
+                        <div class="card-top">
+                            <span class="lesson-num">Naslagwerk</span>
+                            <span class="tag-pill tag-code">Referentie</span>
+                        </div>
+                        <h4>VR &amp; OpenXR Reference</h4>
+                        <p>Snelle referentie voor Unity XR interacties, lifecycle events, OpenXR input acties, performance regels en build checklists.</p>
+                        <ul class="lesson-topics">
+                            <li>XR Interaction Toolkit lifecycle (Select, Activate, Hover)</li>
+                            <li>XR Controller haptics &amp; interactiepatronen</li>
+                            <li>Performance checklist (draw calls, fillrate, instancing)</li>
+                            <li>OpenXR build profielen voor PCVR en Meta Quest</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra Info Grid -->
+        <div class="info-grid">
+            <div class="info-panel">
+                <h4>VR Architectuur Richtlijnen</h4>
+                <ul>
+                  <li><strong>Schaalgetrouwheid:</strong> Handhaaf strikt 1 unit = 1 meter. Verkeerde schaal veroorzaakt desoriëntatie.</li>
+                  <li><strong>Geen Vaste Screen-Space UI:</strong> Plaats UI-elementen uitsluitend als World Space objecten in de 3D-wereld.</li>
+                  <li><strong>Strikte 90 FPS Norm:</strong> Dropping frames veroorzaakt fysieke misselijkheid. Bewaak de 11.1ms frame limiet.</li>
+                  <li><strong>Ontkoppel Input van Logica:</strong> Gebruik Unity Input System Actions in plaats van hard-coded controller keys.</li>
+                </ul>
+            </div>
+
+            <div class="info-panel">
+                <h4>Navigatie &amp; Sneltoetsen</h4>
+                <ul>
+                  <li><strong>Pijltjestoetsen Links/Rechts:</strong> Volgende of vorige slide.</li>
+                  <li><strong>Linkerzijbalk:</strong> Klik op een slide-miniatuur om direct naar een onderwerp te springen.</li>
+                  <li><strong>Spatiebalk / Enter:</strong> Volgende slide weergeven.</li>
+                  <li><strong>Toets F:</strong> Volledig scherm in- of uitschakelen.</li>
+                  <li><strong>Toets ?:</strong> Helpscherm met alle sneltoetsen openen.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Grafisch Lyceum Rotterdam (GLR) • MBO Niveau 4 Immersive Design • <a href="../index.html">Terug naar Hoofdportaal</a></p>
+    </footer>
+</body>
+</html>

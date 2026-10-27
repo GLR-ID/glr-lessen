@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafisch Lyceum Rotterdam • Unity Game Development</title>
+    <style>
+        :root {
+            --glr-yellow: #facc15;
+            --glr-blue: #0284c7;
+            --glr-purple: #8b5cf6;
+            --page-bg: #090c15;
+            --card-bg: #111726;
+            --card-border: #1e293b;
+            --text-title: #f8fafc;
+            --text-body: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--page-bg);
+            color: var(--text-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-brand-strip {
+            width: 100%;
+            background: #0f1422;
+            border-bottom: 2px solid var(--glr-yellow);
+            color: #ffffff;
+            padding: 18px 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .top-brand-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-text h1 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .brand-text p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .school-badge {
+            background: rgba(250, 204, 21, 0.15);
+            color: var(--glr-yellow);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 36px 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .intro-banner {
+            background: linear-gradient(135deg, #131b2e 0%, #0e1524 100%);
+            border: 1px solid var(--card-border);
+            border-left: 6px solid var(--glr-yellow);
+            border-radius: 12px;
+            padding: 26px;
+        }
+
+        .intro-banner h2 {
+            font-size: 1.5rem;
+            color: var(--text-title);
+            margin-bottom: 8px;
+        }
+
+        .intro-banner p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--text-title);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .grid-tracks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .track-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .track-card.blue {
+            border-left: 6px solid var(--glr-blue);
+        }
+
+        .track-card.blue:hover {
+            border-color: var(--glr-blue);
+            background: #151f36;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(2, 132, 199, 0.25);
+        }
+
+        .track-card.purple {
+            border-left: 6px solid var(--glr-purple);
+        }
+
+        .track-card.purple:hover {
+            border-color: var(--glr-purple);
+            background: #1c1836;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
+        }
+
+        .track-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .track-code {
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .track-card.blue .track-code { color: #38bdf8; }
+        .track-card.purple .track-code { color: #a78bfa; }
+
+        .track-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .badge-blue { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); }
+        .badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+
+        .track-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--text-title);
+            margin: 10px 0 6px 0;
+            line-height: 1.3;
+        }
+
+        .track-desc {
+            font-size: 0.92rem;
+            color: var(--text-body);
+            line-height: 1.55;
+        }
+
+        .lesson-list {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .lesson-list li {
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lesson-list li::before {
+            content: "→";
+            font-weight: bold;
+        }
+
+        .track-card.blue .lesson-list li::before { color: #38bdf8; }
+        .track-card.purple .lesson-list li::before { color: #a78bfa; }
+
+        .track-cta {
+            font-size: 0.92rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .track-card.blue .track-cta { color: #38bdf8; }
+        .track-card.purple .track-cta { color: #a78bfa; }
+
+        .track-card.locked { opacity: 0.5; filter: grayscale(0.8); cursor: not-allowed; }
+        .track-card.locked:hover { transform: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); background: var(--card-bg); }
+
+        footer {
+            margin-top: 24px;
+            border-top: 1px solid var(--card-border);
+            padding: 24px;
+            text-align: center;
+            font-size: 0.84rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="top-brand-strip">
+        <div class="top-brand-inner">
+            <div class="brand-text">
+                <h1>Grafisch Lyceum Rotterdam</h1>
+                <p>MBO Niveau 4 • Game Development &amp; Immersive Media</p>
+            </div>
+            <div class="school-badge">GLR Curricula</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="intro-banner">
+            <h2>Praktijkgerichte Unity &amp; C# Curricula</h2>
+            <p>Praktijkgericht lesmateriaal voor Unity Game Development op het Grafisch Lyceum Rotterdam. Dit curriculum is gedifferentieerd in twee trajecten op basis van voorkennis. Beide trajecten starten in <strong>Les 1 bewust zonder code</strong> zodat studenten eerst vertrouwd raken met de interface en physics.</p>
+        </div>
+
+        <h3 class="section-title">Kies je Leertraject</h3>
+
+        <div class="grid-tracks">
+            <!-- Traject IX -->
+            <div class="track-card blue locked" aria-disabled="true">
+                <div>
+                    <div class="track-header">
+                        <span class="track-code">Traject IX</span>
+                        <span class="track-badge badge-blue">Absolute Beginners</span>
+                    </div>
+                    <h3 class="track-title">3D Game Development (3D Platformer)</h3>
+                    <p class="track-desc">Voor studenten zonder enige code-ervaring. Van navigeren in 3D en fysica met zwaartekracht naar WASD-besturing, ronddraaiende munten en exporteren naar een Windows .exe game.</p>
+                    <ul class="lesson-list">
+                        <li><strong>Les 1:</strong> 3D Level Bouwen &amp; Physics (0 regels code)</li>
+                        <li><strong>Les 2:</strong> Eerste 3D Code &amp; Karakter Besturen (C#)</li>
+                        <li><strong>Les 3:</strong> 3D Botsingen, Munten &amp; Score</li>
+                        <li><strong>Les 4:</strong> 3D UI, Knoppen &amp; Ruimtelijk Geluid</li>
+                        <li><strong>Les 5:</strong> 3D Spelcyclus &amp; Windows .exe Build</li>
+                    </ul>
+                </div>
+                <div class="track-cta">&#128274; Binnenkort beschikbaar</div>
+            </div>
+
+            <!-- Traject Immersive Design -->
+            <a class="track-card purple" href="immersive-design/index.html">
+                <div>
+                    <div class="track-header">
+                        <span class="track-code">Traject Immersive Design</span>
+                        <span class="track-badge badge-purple">Ervaring met Programmeren</span>
+                    </div>
+                    <h3 class="track-title">Virtual Reality (VR &amp; XR Interaction)</h3>
+                    <p class="track-desc">Voor studenten met basis programmeerervaring. Bouw een interactieve VR-ervaring met OpenXR en de XR Interaction Toolkit: 6 DoF tracking, locomotie, fysiek vastpakken en haptics.</p>
+                    <ul class="lesson-list">
+                        <li><strong>Les 1:</strong> VR Wereldbouw &amp; de XR Origin (0 code)</li>
+                        <li><strong>Les 2:</strong> VR Input, Locomotion &amp; Comfort Modes</li>
+                        <li><strong>Les 3:</strong> Directe VR Interactie, Sockets &amp; Haptics</li>
+                        <li><strong>Les 4:</strong> Ruimtelijke VR UI &amp; Spatial Audio</li>
+                        <li><strong>Les 5:</strong> VR Performance &amp; OpenXR Standalone Build</li>
+                    </ul>
+                </div>
+                <div class="track-cta">Open Immersive Design Landingspagina &rarr;</div>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Grafisch Lyceum Rotterdam (GLR) • MBO Game Development &bull; 2026</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les 1: Je Eerste VR Wereld in Unity • Grafisch Lyceum Rotterdam</title>
+    <link rel="stylesheet" href="../scripts/hr_slide_deck.css">
+</head>
+<body data-theme="glr">
+    <!-- Core SlideDeck Library -->
+    <script src="../scripts/hr_slide_deck.js"></script>
+    <script>
+        const slides = [
+  {
+    "isHero": true,
+    "title": "Je Eerste VR Wereld in Unity",
+    "subtitle": "Les 1: Bouw een kleine kamer en loop er zelf in rond",
+    "topics": [
+      "1. <strong>Project:</strong> Nieuw Unity 6 project maken",
+      "2. <strong>XR Setup:</strong> OpenXR en XR Interaction Toolkit installeren",
+      "3. <strong>XR Origin:</strong> Jouw hoofd en handen in Unity",
+      "4. <strong>Level bouwen:</strong> Vloer, muren en spullen met cubes",
+      "5. <strong>Licht:</strong> Een lamp en schaduw",
+      "6. <strong>Testen:</strong> In de VR-bril of met de XR Device Simulator"
+    ],
+    "notes": "Vandaag bouwen we. Geen code, geen lange uitleg. Aan het eind loopt iedereen rond in een eigen VR kamer. Zonder bril gebruiken we de simulator."
+  },
+  {
+    "category": "Start",
+    "title": "Wat Maken We Vandaag?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Het Doel</div><div class=\"info-card-text\">Aan het eind loop je in je eigen VR kamer.<ul><li>Een Unity project klaar voor VR</li><li>Een kamer met vloer, muren en spullen</li><li>Test in je VR-bril of in de simulator</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Dit Heb Je Nodig</div><div class=\"info-card-text\"><ul><li><strong>Unity 6</strong> (6000.x) via Unity Hub</li><li>VR-bril (Meta Quest + Link) of geen bril</li><li>Geen bril? Dan gebruik je de simulator</li></ul></div></div></div>",
+    "notes": "Loop de drie stappen door: bouwen, licht, testen. Vraag wie een bril heeft en wie op de simulator werkt. Een Mac kan niet in de bril testen; die studenten gebruiken de simulator.",
+    "deepdive": {
+      "analogy": "Zoals een maquette: eerst een klein model dat je kunt bekijken, daarna pas de details.",
+      "whatIsWhat": "<strong>Project:</strong> de map met al je Unity bestanden.<br><strong>Scene:</strong> de wereld die je bouwt.<br><strong>Simulator:</strong> een nep-bril met muis en toetsenbord.",
+      "trap": "Meteen een groot level willen bouwen. Begin klein.",
+      "rule": "Eerst werkend, daarna mooi."
+    }
+  },
+  {
+    "category": "Project",
+    "title": "Stap 1: Nieuw Project",
+    "images": [
+      {
+        "file": "03-nieuw-project.png",
+        "want": "Unity Hub > New project > kies Universal 3D, naam GLR_VRLab, locatie op een lokale schijf"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Unity Hub</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Open <strong>Unity Hub</strong>. Klik <strong>New project</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Kies editor <strong>Unity 6 (6000.x)</strong> en template <strong>Universal 3D</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Naam: <strong>GLR_VR_Laboratorium</strong>. Klik <strong>Create project</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Let Op</div><div class=\"info-card-text\">Wachten duurt een paar minuten.<ul><li>Sla het project niet in OneDrive op</li><li>Kies een map op je eigen schijf, bijvoorbeeld <strong>C:\\Unity</strong></li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Hub > New project > kies Universal 3D, naam GLR_VRLab, locatie op een lokale schijf</div><code class=\"media-ph-file\">img/les1/03-nieuw-project.png</code></figure></div>",
+    "notes": "OneDrive synchroniseert duizenden kleine Unity bestanden en dat geeft fouten. Laat studenten een lokale map kiezen.",
+    "deepdive": {
+      "analogy": "Een nieuw project is een lege werkplaats met gereedschap erin.",
+      "whatIsWhat": "<strong>Universal 3D:</strong> template met de URP render pipeline. Goed genoeg voor VR.",
+      "trap": "Project in OneDrive of op een USB-stick zetten.",
+      "rule": "Project altijd op een lokale schijf."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Stap 2 en Checkpoint 1",
+    "images": [
+      {
+        "file": "04-scene-opslaan.png",
+        "want": "Unity Editor met de scene GLR_VRLab opgeslagen: Hierarchy met de scene-naam en Project-venster zichtbaar"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Scene Opslaan</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Klik <strong>File > Save As...</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Naam: <strong>GLR_VRLab</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Map: <strong>Assets/Scenes</strong></div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 1: Zie Je Dit?</div><div class=\"info-card-text\">Dan goed.<ul><li>Unity is open met <strong>Scene</strong> en <strong>Hierarchy</strong></li><li>In Hierarchy staat <strong>Main Camera</strong></li><li><strong>GLR_VRLab</strong> staat in Project > Assets > Scenes</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Editor met de scene GLR_VRLab opgeslagen: Hierarchy met de scene-naam en Project-venster zichtbaar</div><code class=\"media-ph-file\">img/les1/04-scene-opslaan.png</code></figure></div>",
+    "notes": "Controleer even bij iedereen. Wie hier vastzit, wacht niet tot later. Les 2 bouwt verder op de scene GLR_VRLab.",
+    "deepdive": {
+      "analogy": "Opslaan met een goede naam is je backup: je vindt je werk altijd terug.",
+      "whatIsWhat": "<strong>Hierarchy:</strong> lijst van alles in je scene.<br><strong>Project:</strong> al je bestanden.",
+      "trap": "Werken in de naamloze SampleScene.",
+      "rule": "Geef je scene meteen een naam en sla vaak op met Ctrl/Cmd + S."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 3: XR Interaction Toolkit",
+    "images": [
+      {
+        "file": "05-package-manager-xri.png",
+        "want": "Window > Package Manager, filter Unity Registry, XR Interaction Toolkit geselecteerd met de Install-knop"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Package Manager</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Klik <strong>Window > Package Manager</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Linksboven: kies <strong>Unity Registry</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zoek <strong>XR Interaction Toolkit</strong> (3.x). Klik <strong>Install</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Popup?</div><div class=\"info-card-text\"><ul><li>Popup over de Input System? Klik <strong>Yes</strong></li><li>Unity herstart. Wacht even.</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Window > Package Manager, filter Unity Registry, XR Interaction Toolkit geselecteerd met de Install-knop</div><code class=\"media-ph-file\">img/les1/05-package-manager-xri.png</code></figure></div>",
+    "notes": "XRI levert de XR Origin en later de interacties. Als de popup niet komt is dat ook goed.",
+    "deepdive": {
+      "analogy": "Een toolkit is een gereedschapskist die je in je project zet.",
+      "whatIsWhat": "<strong>Package:</strong> een los onderdeel dat je kunt installeren.<br><strong>XR Interaction Toolkit:</strong> kant-en-klare onderdelen voor VR.",
+      "trap": "Het verkeerde filter: My Assets in plaats van Unity Registry.",
+      "rule": "Pakketten haal je uit Unity Registry."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 4: Samples Importeren",
+    "images": [
+      {
+        "file": "06-xri-samples.png",
+        "want": "Package Manager > XR Interaction Toolkit > tabblad Samples met Starter Assets en XR Device Simulator (Import-knoppen)"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Samples</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer <strong>XR Interaction Toolkit</strong> in Package Manager.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Open het tabblad <strong>Samples</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Klik <strong>Import</strong> bij <strong>Starter Assets</strong> en bij <strong>XR Device Simulator</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Waarom?</div><div class=\"info-card-text\"><ul><li><strong>Starter Assets:</strong> heb je nodig in les 2</li><li><strong>XR Device Simulator:</strong> testen zonder bril</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Package Manager > XR Interaction Toolkit > tabblad Samples met Starter Assets en XR Device Simulator (Import-knoppen)</div><code class=\"media-ph-file\">img/les1/06-xri-samples.png</code></figure></div>",
+    "notes": "Samples staan niet standaard in je project. Zonder import vinden studenten de simulator straks niet.",
+    "deepdive": {
+      "analogy": "Samples zijn voorbeeldbestanden bij het gereedschap.",
+      "whatIsWhat": "<strong>Starter Assets:</strong> kant-en-klare knoppen-instellingen.<br><strong>Device Simulator:</strong> prefab met nep-bril.",
+      "trap": "Samples overslaan omdat je een bril hebt.",
+      "rule": "Importeer beide, ook met bril."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 5: OpenXR Aanzetten",
+    "images": [
+      {
+        "file": "07-openxr-aanvinken.png",
+        "want": "Edit > Project Settings > XR Plug-in Management, tabblad Windows/Mac/Linux, OpenXR aangevinkt"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Project Settings</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Klik <strong>Edit > Project Settings</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Kies <strong>XR Plug-in Management</strong>. Klik <strong>Install XR Plug-in Management</strong> als dat staat.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Open het tabblad met het monitor-icoon (Windows, Mac, Linux). Vink <strong>OpenXR</strong> aan.</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Mac?</div><div class=\"info-card-text\">OpenXR werkt niet met een bril op Mac. Sla dit over en test straks met de simulator.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Edit > Project Settings > XR Plug-in Management, tabblad Windows/Mac/Linux, OpenXR aangevinkt</div><code class=\"media-ph-file\">img/les1/07-openxr-aanvinken.png</code></figure></div>",
+    "notes": "OpenXR is de standaard waardoor dezelfde app op veel brillen werkt. Dat is de enige uitleg die we hier geven.",
+    "deepdive": {
+      "analogy": "OpenXR is een universele stekker: een stekker, veel brillen.",
+      "whatIsWhat": "<strong>XR Plug-in Management:</strong> hier zet je aan welke bril je gebruikt.<br><strong>OpenXR:</strong> de standaard voor alle grote brillen.",
+      "trap": "Het vinkje bij het verkeerde tabblad (bijvoorbeeld Android) zetten.",
+      "rule": "Voor test op de pc: vinkje op het tabblad Windows, Mac, Linux."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 6: Profiel en Fix All",
+    "images": [
+      {
+        "file": "08-profiel-fix-all.png",
+        "want": "Project Settings > XR Plug-in Management > OpenXR: Interaction Profiles met profiel in de lijst en het Project Validation-venster met Fix All"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">OpenXR Instellingen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Klik links onder XR Plug-in Management op <strong>OpenXR</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Bij <strong>Interaction Profiles</strong> klik <strong>+</strong> en kies <strong>Oculus Touch Controller Profile</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Open <strong>Project Validation</strong>. Klik <strong>Fix All</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Meta Quest</div><div class=\"info-card-text\">Het Oculus Touch profiel past bij Quest 2 en Quest 3.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Project Settings > XR Plug-in Management > OpenXR: Interaction Profiles met profiel in de lijst en het Project Validation-venster met Fix All</div><code class=\"media-ph-file\">img/les1/08-profiel-fix-all.png</code></figure></div>",
+    "notes": "Een ander merk bril: kies het profiel van dat merk. Fix All lost de gele en rode meldingen op.",
+    "deepdive": {
+      "analogy": "Een profiel vertelt Unity hoe jouw controllers eruitzien.",
+      "whatIsWhat": "<strong>Interaction Profile:</strong> lijst met knoppen van een controller.<br><strong>Project Validation:</strong> controle op fouten in je instellingen.",
+      "trap": "Fix All niet doen en dan raar gedrag krijgen.",
+      "rule": "Na elke wijziging aan XR: Project Validation controleren."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint 2: XR Setup",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 2: Zie Je Dit?</div><div class=\"info-card-text\">Dan goed.<ul><li><strong>OpenXR</strong> staat aangevinkt</li><li>Je profiel staat in de lijst bij Interaction Profiles</li><li><strong>Project Validation</strong> toont geen rode kruisjes</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Lukt Het Niet?</div><div class=\"info-card-text\"><ul><li>Klik nog eens op <strong>Fix All</strong></li><li>Herstart Unity en kijk opnieuw</li><li>Roep de docent</li></ul></div></div></div>",
+    "notes": "Loop rond en controleer Project Validation bij iedereen. Rode kruisjes nu oplossen voorkomt problemen bij het testen.",
+    "deepdive": {
+      "analogy": "Een controle voor je verder bouwt, net als een bouwkeuring.",
+      "whatIsWhat": "<strong>Project Validation:</strong> lijst van instellingen die nog niet kloppen.",
+      "trap": "Doorgaan met rode kruisjes.",
+      "rule": "Geen rood, dan verder."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 7: XR Origin Toevoegen",
+    "images": [
+      {
+        "file": "10-xr-origin-hierarchy.png",
+        "want": "Hierarchy na GameObject > XR > XR Origin (VR): XR Origin met Camera Offset, Main Camera en controllers uitgeklapt, geen losse Main Camera"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">In de Hierarchy</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer <strong>Main Camera</strong>. Druk op Delete.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>GameObject > XR > XR Origin (VR)</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet in de Inspector <strong>Position</strong> op 0, 0, 0.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Waarom?</div><div class=\"info-card-text\">Een VR-bril heeft twee ogen, dus Unity maakt twee beelden. De <strong>XR Origin</strong> regelt dat voor je.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Hierarchy na GameObject > XR > XR Origin (VR): XR Origin met Camera Offset, Main Camera en controllers uitgeklapt, geen losse Main Camera</div><code class=\"media-ph-file\">img/les1/10-xr-origin-hierarchy.png</code></figure></div>",
+    "notes": "Dit is de enige theorie van vandaag: twee ogen, twee beelden. De XR Origin vervangt de gewone camera. Zonder XR Origin ziet de bril niets.",
+    "deepdive": {
+      "analogy": "De XR Origin is jouw lichaam in het spel: hoofd en twee handen.",
+      "whatIsWhat": "<strong>XR Origin:</strong> object met de camera (hoofd) en de controllers (handen).<br><strong>Main Camera:</strong> de gewone camera voor schermen.",
+      "trap": "Twee camera's in de scene laten staan.",
+      "rule": "Een VR scene heeft een XR Origin en geen losse Main Camera."
+    }
+  },
+  {
+    "category": "XR Setup",
+    "title": "Stap 8: Op de Vloer Staan",
+    "images": [
+      {
+        "file": "11-tracking-origin-floor.png",
+        "want": "Inspector van XR Origin: component XR Origin met Tracking Origin Mode op Floor en Position Y op 0"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Tracking</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer <strong>XR Origin</strong> in de Hierarchy.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Zoek in de Inspector het component <strong>XR Origin</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet <strong>Tracking Origin Mode</strong> op <strong>Floor</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Wat Betekent Floor?</div><div class=\"info-card-text\"><ul><li>Jouw echte vloer is <strong>Y = 0</strong> in Unity</li><li>Klap <strong>Camera Offset</strong> open: daar zit de <strong>Main Camera</strong> (jouw hoofd)</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector van XR Origin: component XR Origin met Tracking Origin Mode op Floor en Position Y op 0</div><code class=\"media-ph-file\">img/les1/11-tracking-origin-floor.png</code></figure></div>",
+    "notes": "Met Floor heb je in de bril de juiste lengte. Als je te hoog of te laag zweeft, is dit de eerste plek om te kijken.",
+    "deepdive": {
+      "analogy": "Floor is als de lat tegen de muur: je lengte klopt direct.",
+      "whatIsWhat": "<strong>Tracking Origin Mode:</strong> bepaalt waar nul-hoogte ligt.<br><strong>Floor:</strong> nul is de vloer van je echte kamer.",
+      "trap": "Op Device laten staan en dan te laag of te hoog zijn.",
+      "rule": "XR Origin op Floor, positie Y op 0."
+    }
+  },
+  {
+    "category": "A-Frame",
+    "title": "A-Frame en Unity: Objecten",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">A-Frame (HTML)</div><div class=\"info-card-text\"><ul><li><strong>&lt;a-box&gt;</strong> is een object</li><li><strong>position, rotation, scale</strong> als attributen</li><li><strong>&lt;a-sky&gt;</strong> en <strong>&lt;a-light&gt;</strong> voor lucht en licht</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Unity (Editor)</div><div class=\"info-card-text\"><ul><li><strong>GameObject > 3D Object > Cube</strong> in de Hierarchy</li><li><strong>Inspector > Transform:</strong> Position, Rotation, Scale</li><li><strong>Skybox</strong> en <strong>Light</strong> component</li></ul></div></div></div>",
+    "notes": "Dit kennen ze al uit A-Frame. Zelfde idee, andere plek: in Unity klik je en vul je getallen in. Niet langer dan een minuut.",
+    "deepdive": {
+      "analogy": "Dezelfde taal in een ander land: de woorden zijn anders, het idee blijft.",
+      "whatIsWhat": "<strong>GameObject:</strong> elk object in Unity.<br><strong>Transform:</strong> positie, draaiing en grootte.",
+      "trap": "Denken dat Unity iets heel anders is dan A-Frame.",
+      "rule": "a-box = Cube, attributes = Inspector."
+    }
+  },
+  {
+    "category": "Level bouwen",
+    "title": "Stap 9: Verplaatsen, Draaien, Schalen",
+    "images": [
+      {
+        "file": "13-transform-tools.png",
+        "want": "Scene View met een cube en de Move-gizmo (pijlen), plus de toolbar met de W, E, R tools"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Tools in de Scene View</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Druk op <strong>W</strong>: Move (verplaatsen).</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Druk op <strong>E</strong>: Rotate (draaien).</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Druk op <strong>R</strong>: Scale (groter of kleiner).</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Handig</div><div class=\"info-card-text\"><ul><li><strong>1 unit = 1 meter</strong></li><li>Selecteer een object en druk op <strong>F</strong> om erheen te vliegen</li><li>Of typ de getallen in <strong>Inspector > Transform</strong></li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Scene View met een cube en de Move-gizmo (pijlen), plus de toolbar met de W, E, R tools</div><code class=\"media-ph-file\">img/les1/13-transform-tools.png</code></figure></div>",
+    "notes": "Laat ze een tijdje met de gizmo's spelen op een testcube. Straks typen ze liever getallen in de Inspector, dat is nauwkeuriger.",
+    "deepdive": {
+      "analogy": "W, E, R zijn je schroevendraaier, zaag en meetlint.",
+      "whatIsWhat": "<strong>Gizmo:</strong> de pijlen of cirkels in de Scene View.<br><strong>Unit:</strong> in Unity is 1 unit gelijk aan 1 meter.",
+      "trap": "Alles op het oog schalen, zodat niets op ware grootte is.",
+      "rule": "Typ getallen in de Inspector voor precisie."
+    }
+  },
+  {
+    "category": "Level bouwen",
+    "title": "Stap 10: De Vloer",
+    "images": [
+      {
+        "file": "14-vloer-inspector.png",
+        "want": "Scene View en Inspector van de cube Vloer: Position 0, -0.1, 0 en Scale 8, 0.2, 8"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Maak de Vloer</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Klik <strong>GameObject > 3D Object > Cube</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Hernoem naar <strong>Vloer</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet <strong>Position</strong> 0, -0.1, 0 en <strong>Scale</strong> 8, 0.2, 8.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Controle</div><div class=\"info-card-text\">De vloer is 8 bij 8 meter. De bovenkant ligt op <strong>Y = 0</strong>. Daar staat jouw XR Origin.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Scene View en Inspector van de cube Vloer: Position 0, -0.1, 0 en Scale 8, 0.2, 8</div><code class=\"media-ph-file\">img/les1/14-vloer-inspector.png</code></figure></div>",
+    "notes": "Een cube heeft al een Box Collider. Dat is later nodig voor botsingen.",
+    "deepdive": {
+      "analogy": "De vloer is de tafel waarop je alle andere dingen neerzet.",
+      "whatIsWhat": "<strong>Cube:</strong> eenvoudig blok van 1 meter.<br><strong>Scale 8, 0.2, 8:</strong> breed, dun, diep.",
+      "trap": "Een vloer met de bovenkant op Y 0.1; dan zweef je.",
+      "rule": "Bovenkant van de vloer op Y = 0."
+    }
+  },
+  {
+    "category": "Level bouwen",
+    "title": "Stap 11: Vier Muren",
+    "images": [
+      {
+        "file": "15-vier-muren.png",
+        "want": "Scene View met vloer en vier muren van boven: de kamer is dicht, Hierarchy toont Muur_Achter, Muur_Voor, Muur_Links, Muur_Rechts"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Muren</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Maak een Cube. Naam: <strong>Muur_Achter</strong>. Position 0, 1.5, 4. Scale 8, 3, 0.2.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Druk <strong>Ctrl/Cmd + D</strong>. Naam: <strong>Muur_Voor</strong>. Position 0, 1.5, -4.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Dupliceer nog twee: <strong>Muur_Links</strong> (-4, 1.5, 0) en <strong>Muur_Rechts</strong> (4, 1.5, 0). Scale 0.2, 3, 8.</div></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Scene View met vloer en vier muren van boven: de kamer is dicht, Hierarchy toont Muur_Achter, Muur_Voor, Muur_Links, Muur_Rechts</div><code class=\"media-ph-file\">img/les1/15-vier-muren.png</code></figure></div>",
+    "notes": "Controleer het kamer-plaatje in de Scene View. Wie de getallen mixt, ziet muren in de verkeerde richting. De XR Origin staat in het midden.",
+    "deepdive": {
+      "analogy": "Een kamer bouwen met cubes is als bouwen met Lego-platen.",
+      "whatIsWhat": "<strong>Duplicate:</strong> kopie van een object.<br><strong>Scale:</strong> breedte, hoogte, diepte.",
+      "trap": "Alle muren dezelfde Scale geven.",
+      "rule": "Een muur is 3 meter hoog en 0.2 meter dik."
+    }
+  },
+  {
+    "category": "Level bouwen",
+    "title": "Stap 12: Spullen in de Kamer",
+    "images": [
+      {
+        "file": "16-props-in-kamer.png",
+        "want": "Scene View met tafel, zuil en bal in de kamer, en de Hierarchy met de props"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Maak Vier Props</div><div class=\"info-card-text\">Gebruik <strong>GameObject > 3D Object</strong>.<ul><li><strong>Tafel</strong> (Cube): Position 0, 0.4, 2. Scale 1.5, 0.8, 0.8</li><li><strong>Zuil</strong> (Cylinder): Position -2.5, 1.5, 2.5. Scale 0.5, 1.5, 0.5</li><li><strong>Bal</strong> (Sphere): Position 0, 0.95, 2. Scale 0.3, 0.3, 0.3</li><li><strong>Kist</strong> (Cube): Position 2.5, 0.25, -1. Scale 0.5, 0.5, 0.5. Rotation Y 30</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Scene View met tafel, zuil en bal in de kamer, en de Hierarchy met de props</div><code class=\"media-ph-file\">img/les1/16-props-in-kamer.png</code></figure></div>",
+    "notes": "De bal staat op de tafel. Controleer de hoogtes. Laat studenten eigen props toevoegen als ze snel klaar zijn.",
+    "deepdive": {
+      "analogy": "Props zijn de meubels van je kamer.",
+      "whatIsWhat": "<strong>Prop:</strong> klein voorwerp in een level.<br><strong>Cylinder en Sphere:</strong> andere vormen onder 3D Object.",
+      "trap": "Props in de lucht of in de vloer laten staan.",
+      "rule": "Onderkant van elk object op de vloer of tafel."
+    }
+  },
+  {
+    "category": "Level bouwen",
+    "title": "Stap 13: Kleur Geven",
+    "images": [
+      {
+        "file": "17-material-base-map.png",
+        "want": "Inspector van een Material met de kleurkiezer bij Base Map, en de gekleurde kamer in de Scene View"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Materials</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Rechtsklik in Project: <strong>Create > Material</strong>. Geef een naam.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Kies in de Inspector een kleur bij <strong>Base Map</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Sleep het material op een object.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Doel</div><div class=\"info-card-text\">Maak minstens drie kleuren.<ul><li>Een voor vloer</li><li>Een voor muren</li><li>Een voor props</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector van een Material met de kleurkiezer bij Base Map, en de gekleurde kamer in de Scene View</div><code class=\"media-ph-file\">img/les1/17-material-base-map.png</code></figure></div>",
+    "notes": "Kleur helpt je afstand en grootte te zien in de bril. Alles wit werkt niet goed.",
+    "deepdive": {
+      "analogy": "Een material is verf voor je object.",
+      "whatIsWhat": "<strong>Material:</strong> bestand met kleur en glans.<br><strong>Base Map:</strong> de kleur van het oppervlak in URP.",
+      "trap": "Voor elk object een eigen material maken.",
+      "rule": "Een material per soort oppervlak."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint 3: Je Kamer",
+    "images": [
+      {
+        "file": "18-klaar-level.png",
+        "want": "De afgewerkte kamer in de Scene View: vloer, vier muren, vier props, alles gekleurd, XR Origin in het midden"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 3: Zie Je Dit?</div><div class=\"info-card-text\">Dan goed.<ul><li>Vloer, vier muren en vier props</li><li>Alles heeft een kleur</li><li>De <strong>XR Origin</strong> staat midden in de kamer op de vloer</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Sla Op</div><div class=\"info-card-text\">Druk op <strong>Ctrl/Cmd + S</strong>.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">De afgewerkte kamer in de Scene View: vloer, vier muren, vier props, alles gekleurd, XR Origin in het midden</div><code class=\"media-ph-file\">img/les1/18-klaar-level.png</code></figure></div>",
+    "notes": "Laat de studenten de Scene View draaien (rechtermuisknop + WASD) en controleren of de kamer dicht is.",
+    "deepdive": {
+      "analogy": "Zoals een opname: eerst kijken of alles erop staat.",
+      "whatIsWhat": "<strong>Scene View:</strong> jouw werkvenster om rond te vliegen.",
+      "trap": "Niet opslaan en Unity laten crashen.",
+      "rule": "Sla op voor elke test."
+    }
+  },
+  {
+    "category": "Licht",
+    "title": "Stap 14: Licht",
+    "images": [
+      {
+        "file": "19-licht-schaduw.png",
+        "want": "Scene View met de Directional Light en Point Light in de kamer en zichtbare schaduw; Inspector van de Point Light"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Lampen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer <strong>Directional Light</strong>. Zet <strong>Rotation</strong> op 50, -30, 0.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>GameObject > Light > Point Light</strong>. Position 0, 2.5, 0.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet bij de Point Light <strong>Shadow Type</strong> op <strong>Soft Shadows</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Controle</div><div class=\"info-card-text\">Je ziet schaduw onder de tafel en bij de kist.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Scene View met de Directional Light en Point Light in de kamer en zichtbare schaduw; Inspector van de Point Light</div><code class=\"media-ph-file\">img/les1/19-licht-schaduw.png</code></figure></div>",
+    "notes": "De Directional Light is de zon. De Point Light is een lamp in de kamer. Meer licht is niet beter: in VR kost licht rekenkracht, dat komt in les 5.",
+    "deepdive": {
+      "analogy": "De Directional Light is de zon; de Point Light is een lamp.",
+      "whatIsWhat": "<strong>Directional Light:</strong> licht dat overal vandaan hetzelfde schijnt.<br><strong>Point Light:</strong> licht dat vanaf een punt in alle richtingen schijnt.",
+      "trap": "Te veel lampen plaatsen.",
+      "rule": "Eerst een zon en een lamp. Meer pas als het moet."
+    }
+  },
+  {
+    "category": "A-Frame",
+    "title": "A-Frame en Unity: Bril",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">A-Frame</div><div class=\"info-card-text\"><ul><li><strong>&lt;a-scene&gt;</strong> met een camera rig</li><li>Open de pagina in de browser (WebXR)</li><li>Klik op de VR-knop</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Unity</div><div class=\"info-card-text\"><ul><li><strong>XR Origin</strong> is de camera rig</li><li>Klik <strong>Play</strong> met de bril verbonden</li><li>Later: <strong>Build</strong> naar een app</li></ul></div></div></div>",
+    "notes": "Zelfde idee: de browser doet het in A-Frame, in Unity doet de Editor het via OpenXR. Kort houden.",
+    "deepdive": {
+      "analogy": "A-Frame laat de bril via de browser praten; Unity doet dat via OpenXR.",
+      "whatIsWhat": "<strong>WebXR:</strong> VR in de browser.<br><strong>OpenXR:</strong> VR in apps.",
+      "trap": "Verwachten dat de VR-knop er in Unity ook is.",
+      "rule": "In Unity start je VR met Play of een Build."
+    }
+  },
+  {
+    "category": "Testen",
+    "title": "Stap 15: Test met de Simulator",
+    "images": [
+      {
+        "file": "21-xr-device-simulator.png",
+        "want": "Game view in Play Mode met de XR Device Simulator overlay (toetsen-uitleg) en de prefab in de Hierarchy"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">XR Device Simulator</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Sleep de prefab <strong>XR Device Simulator</strong> in de Hierarchy (Project > Assets > Samples > XR Interaction Toolkit > 3.x > XR Device Simulator).</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>Play</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Klik in de Game view. Loop met <strong>WASD</strong>, kijk met de muis.</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Hulp</div><div class=\"info-card-text\">Het venster in de Game view toont alle toetsen.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Game view in Play Mode met de XR Device Simulator overlay (toetsen-uitleg) en de prefab in de Hierarchy</div><code class=\"media-ph-file\">img/les1/21-xr-device-simulator.png</code></figure></div>",
+    "notes": "De exacte toetsen verschillen per versie van XRI. Het overlay-venster in de Game view toont ze. Als er een bril is aangesloten, zet je de simulator uit.",
+    "deepdive": {
+      "analogy": "De simulator is een nep-bril met muis en toetsen.",
+      "whatIsWhat": "<strong>Prefab:</strong> kant-en-klaar object om in een scene te slepen.<br><strong>Game view:</strong> het venster dat in Play Mode werkt.",
+      "trap": "Op Play drukken zonder de Game view aan te klikken.",
+      "rule": "Eerst klikken in de Game view, dan bewegen."
+    }
+  },
+  {
+    "category": "Testen",
+    "title": "Stap 16: Test in de VR-bril",
+    "images": [
+      {
+        "file": "22-quest-link-runtime.png",
+        "want": "Meta Quest Link app > Settings > General met de optie Set Meta Quest Link as active OpenXR runtime"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Quest met Link</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Verbind de bril met de pc via <strong>Meta Quest Link</strong> (kabel of Air Link).</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Open in de Meta Quest Link app <strong>Settings > General</strong> en klik <strong>Set Meta Quest Link as active OpenXR runtime</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet de <strong>XR Device Simulator</strong> uit. Klik <strong>Play</strong> en zet je bril op.</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Geen Bril?</div><div class=\"info-card-text\">Laat de docent je simulator zien.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Meta Quest Link app > Settings > General met de optie Set Meta Quest Link as active OpenXR runtime</div><code class=\"media-ph-file\">img/les1/22-quest-link-runtime.png</code></figure></div>",
+    "notes": "Dit werkt alleen op Windows. Een APK-build voor Quest zonder kabel komt in les 5. Als de bril zwart blijft: runtime check.",
+    "deepdive": {
+      "analogy": "Link is een lange HDMI-kabel voor je bril.",
+      "whatIsWhat": "<strong>Meta Quest Link:</strong> programma dat de Quest als pc-bril laat werken.<br><strong>Active OpenXR runtime:</strong> welk programma de bril aanstuurt.",
+      "trap": "Link wel aan, maar OpenXR runtime niet ingesteld: zwart beeld.",
+      "rule": "Controleer eerst de runtime."
+    }
+  },
+  {
+    "category": "Hulp",
+    "title": "Problemen Oplossen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Setup en Bril</div><div class=\"info-card-text\"><ul><li>Rode fouten over Input: <strong>Edit > Project Settings > Player > Active Input Handling</strong> op Both zetten</li><li>Zwart beeld in de bril: Link als OpenXR runtime instellen</li><li>Project Validation rood: <strong>Fix All</strong></li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">In de Kamer</div><div class=\"info-card-text\"><ul><li>Je zweeft of staat in de vloer: <strong>XR Origin</strong> Y = 0 en <strong>Floor</strong></li><li>Simulator doet niets: klik in de Game view</li><li>Door een muur lopen: normaal, dat lossen we in les 2 op</li></ul></div></div></div>",
+    "notes": "Loop door de lijst. De meeste problemen zijn vergeten Fix All, verkeerd tabblad voor OpenXR, of de runtime niet ingesteld.",
+    "deepdive": {
+      "analogy": "Een checklist voor de monteur: eerst de simpele dingen.",
+      "whatIsWhat": "<strong>Console:</strong> venster met foutmeldingen.<br><strong>Runtime:</strong> programma dat de bril aanstuurt.",
+      "trap": "Direct alles opnieuw installeren.",
+      "rule": "Lees eerst de foutmelding in de Console."
+    }
+  },
+  {
+    "category": "Fysica",
+    "title": "Fysica: Objecten Laten Vallen",
+    "images": [
+      {
+        "file": "24-rigidbody-inspector.png",
+        "want": "Inspector van een Cube met Rigidbody (Use Gravity) en Box Collider, plus de Cube boven de vloer in de Scene View"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Object Laten Vallen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer een object, bijvoorbeeld een Cube.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Add Component > Rigidbody</strong>, laat <strong>Use Gravity</strong> aan.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Geef de vloer een <strong>Collider</strong>, dan valt het object niet door.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Druk op <strong>Play</strong>: het object valt.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Handig</div><div class=\"info-card-text\"><ul><li>Cube, Sphere en Plane hebben al een <strong>Collider</strong></li><li><strong>Mass</strong> en <strong>Is Kinematic</strong>: zwaarte, of het object vast blijft staan</li><li>Tip: bouw een stapel kisten en gooi ze om</li></ul></div></div><div class=\"info-card purple\"><div class=\"info-card-title\">A-Frame</div><div class=\"info-card-text\"><strong>dynamic-body</strong> is Rigidbody, <strong>static-body</strong> is een vaste Collider.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector van een Cube met Rigidbody (Use Gravity) en Box Collider, plus de Cube boven de vloer in de Scene View</div><code class=\"media-ph-file\">img/les1/24-rigidbody-inspector.png</code></figure></div>",
+    "notes": "Kort houden. Rigidbody geeft zwaartekracht, Collider geeft een vorm om tegenaan te botsen. Laat ze een stapel kisten bouwen en omgooien. Vergelijk met A-Frame: dynamic-body en static-body.",
+    "deepdive": {
+      "analogy": "Rigidbody is het gewicht, Collider is de huid waar je tegenaan stoot.",
+      "whatIsWhat": "<strong>Rigidbody:</strong> laat Unity fysica op het object doen.<br><strong>Collider:</strong> de vorm voor botsingen.",
+      "trap": "Rigidbody op een object zonder Collider op de vloer: het valt door de wereld.",
+      "rule": "Rigidbody om te vallen, Collider om te botsen."
+    }
+  },
+  {
+    "category": "Opdracht",
+    "title": "Opdracht: Blockout van Je Eigen Concept",
+    "images": [
+      {
+        "file": "25-voorbeeld-blockout.png",
+        "want": "Voorbeeld van een blockout van een eigen concept in de Scene View: grote simpele vormen, gekleurd, met licht"
+      },
+      {
+        "file": "25-hierarchy-nette-namen.png",
+        "want": "Hierarchy met duidelijke namen voor alle onderdelen en XR Origin"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Doel</div><div class=\"info-card-text\">Een simpele blockout van je eigen concept.<ul><li>Grote vormen (<strong>Cube</strong>, <strong>Cylinder</strong>, <strong>Sphere</strong>, <strong>Plane</strong>), geen details</li><li><strong>File > Save As > GLR_Opdracht1</strong></li><li>Optioneel: <strong>Rigidbody</strong> om te vallen</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Eisen</div><div class=\"info-card-text\"><ul><li>Schaal klopt: mens 1.8 m, deur 2 m</li><li>Duidelijke namen in de <strong>Hierarchy</strong>, kleur met <strong>Materials</strong></li><li><strong>Directional Light</strong> en Point of Spot Light</li><li><strong>XR Origin</strong> op de startplek</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Laat zien aan docent</div><div class=\"info-card-text\"><ul><li>Scene opgeslagen</li><li>Je loopt erdoorheen in VR of simulator</li><li>Geen rode fouten</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Voorbeeld van een blockout van een eigen concept in de Scene View: grote simpele vormen, gekleurd, met licht</div><code class=\"media-ph-file\">img/les1/25-voorbeeld-blockout.png</code></figure><figure class=\"media-fig media-placeholder\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Hierarchy met duidelijke namen voor alle onderdelen en XR Origin</div><code class=\"media-ph-file\">img/les1/25-hierarchy-nette-namen.png</code></figure></div>",
+    "notes": "Elke student heeft al een eigen game- of VR-concept uit een andere opdracht. Ze bouwen daar een simpele blockout van, geen specifieke ruimte. Let op: geen details, geen echte modellen. GLR_VRLab mag niet veranderen, want les 2 bouwt erop voort. Loop de checklist langs bij de afronding.",
+    "deepdive": {
+      "analogy": "Een maquette van karton voor je het echte model maakt.",
+      "whatIsWhat": "<strong>Blockout:</strong> ruwe versie met simpele vormen.<br><strong>Save As:</strong> opslaan als een nieuw bestand.",
+      "trap": "Verder bouwen in GLR_VRLab, of al details maken.",
+      "rule": "Eerst Save As, dan grote vormen, schaal en licht."
+    }
+  }
+];
+
+        SlideDeck.init({
+            theme: 'glr',
+            trackTitle: "MBO Traject Immersive Design • Virtual Reality & XR",
+            lessonNumber: 1,
+            lessonTitle: "Je Eerste VR Wereld in Unity",
+            prevLessonUrl: null,
+            nextLessonUrl: null,
+            overviewUrl: 'index.html',
+            slides: slides
+        });
+    </script>
+</body>
+</html>

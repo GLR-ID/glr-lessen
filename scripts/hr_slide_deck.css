@@ -1416,3 +1416,9 @@ body.lab-mode .content-col.media-col {
     color: var(--theme-accent);
     overflow-wrap: anywhere;
 }
+
+/* Screenshot slot: placeholder texts hide once the img loaded */
+.media-fig:not(.media-placeholder) > .media-ph-icon,
+.media-fig:not(.media-placeholder) > .media-ph-text,
+.media-fig:not(.media-placeholder) > .media-ph-file { display: none; }
+.media-fig.media-placeholder > img { display: none; }

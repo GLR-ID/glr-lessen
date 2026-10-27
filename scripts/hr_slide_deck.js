@@ -405,6 +405,7 @@
         if (slideIdx < 0) slideIdx = 0;
         if (slideIdx >= state.slides.length) slideIdx = state.slides.length - 1;
         state.currentSlide = slideIdx;
+        window.currentSlide = slideIdx; // DeckEditor reads this to know which slide to save
 
         const slide = state.slides[slideIdx];
         const container = document.getElementById('viewInteractive');

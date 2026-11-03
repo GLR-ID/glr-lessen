@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les 2: Eerste Code en GitHub • Grafisch Lyceum Rotterdam</title>
+    <link rel="stylesheet" href="../scripts/hr_slide_deck.css">
+</head>
+<body data-theme="glr">
+    <!-- Core SlideDeck Library -->
+    <script src="../scripts/hr_slide_deck.js"></script>
+    <script>
+        const slides = [
+  {
+    "isHero": true,
+    "title": "Eerste Code en GitHub",
+    "subtitle": "Les 2: Een Unity repo voor je team, C# en je eerste interacties",
+    "topics": [
+      "1. <strong>Unity en Git:</strong> Wat is anders dan bij web?",
+      "2. <strong>Repo maken:</strong> GitHub Desktop, .gitignore en Git LFS",
+      "3. <strong>Teamregels:</strong> Scenes, prefabs, pull, commit en push in GitHub Desktop",
+      "4. <strong>C# basis:</strong> Eerste script, methodes en variabelen",
+      "5. <strong>Interacties:</strong> Speler, triggers, deur, score en werktijd aan je eigen game"
+    ],
+    "notes": "Studenten kennen Git al. Vandaag gaat het om Unity in een team: de juiste repo-setup en strenge regels, zodat jullie elkaars werk niet kapot maken. Daarna de eerste code."
+  },
+  {
+    "category": "Start",
+    "title": "Wat Maken We Vandaag?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Drie Resultaten</div><div class=\"info-card-text\"><ul><li>Een Unity repo met teamregels</li><li>Je eerste C# script</li><li>Eerste interacties in je eigen game</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Zo Loopt De Les</div><div class=\"info-card-text\"><ul><li><strong>Eerst:</strong> repo en regels</li><li><strong>Dan:</strong> C# basis</li><li><strong>Laatst:</strong> werktijd aan je eigen game</li></ul></div></div></div>",
+    "notes": "Loop de volgorde door. Teams van twee tot vier studenten werken in een Unity project. Teams die al een project van les 1 hebben, kiezen er één om mee te werken.",
+    "deepdive": {
+      "analogy": "Eerst spreek je de spelregels af, daarna pas begin je met spelen.",
+      "whatIsWhat": "<strong>Repo:</strong> gedeelde projectmap op GitHub.<br><strong>Prefab:</strong> een herbruikbaar object als bestand.<br><strong>Branch:</strong> eigen werklijn naast main.",
+      "trap": "Meteen gaan bouwen zonder afspraken.",
+      "rule": "Eerst regels, dan bouwen."
+    }
+  },
+  {
+    "category": "Unity en Git",
+    "title": "Unity en Git: Wat Is Anders?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Scenes Zijn Tekst</div><div class=\"info-card-text\">Scenes en prefabs zijn YAML-bestanden. Twee mensen die dezelfde scene aanpassen krijgen bijna altijd een conflict.</div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Elk Bestand Een .meta</div><div class=\"info-card-text\">Unity maakt naast elk asset een <strong>.meta</strong> bestand. Mist die, dan breken verwijzingen. Commit altijd asset en .meta samen. Nieuwe Unity-projecten hebben Visible Meta Files en Force Text al aan. Check het één keer: Edit > Project Settings > Version Control / Editor.</div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Veel Is Overbodig</div><div class=\"info-card-text\">De map <strong>Library</strong> is enorm en hoort niet in Git. Grote bestanden (fbx, psd, wav) gaan via Git LFS.</div></div></div>",
+    "notes": "Ze kennen commit, push en pull. Leg alleen uit waarom Unity extra setup nodig heeft. Een scene is geen leesbare code: een merge-conflict in YAML los je zelden handmatig goed op.",
+    "deepdive": {
+      "analogy": "Een scene is één lang tekstbestand voor het hele level. Twee mensen die het tegelijk bewerken is als twee mensen in dezelfde Word-regel typen.",
+      "whatIsWhat": "<strong>YAML:</strong> tekstformaat waarin Unity scenes en prefabs opslaat.<br><strong>.meta:</strong> bevat de GUID, het vaste nummer waarmee Unity assets aan elkaar koppelt.<br><strong>Library:</strong> cache die Unity zelf opnieuw maakt.",
+      "trap": "Denken dat Unity net zo mergt als gewone code.",
+      "rule": "Voorkomen is beter dan conflicten oplossen."
+    }
+  },
+  {
+    "category": "Repo Setup",
+    "title": "Stap 1: Repo Maken voor Unity",
+    "images": [
+      {
+        "file": "04-github-nieuwe-repo.png",
+        "want": "github.com New repository: naam ingevuld, Add README aan, Add .gitignore op Unity"
+      },
+      {
+        "file": "04-desktop-clone-repository.png",
+        "want": "GitHub Desktop: File > Clone repository, repo gekozen, veld Local path ingevuld, knop Clone"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Op github.com</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Eén teamlid klikt <strong>New repository</strong>. Kies <strong>Add README</strong> en <strong>Add .gitignore: Unity</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Geef de anderen schrijfrechten: <strong>Settings &gt; Collaborators</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">In GitHub Desktop</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\"><strong>File &gt; Clone repository</strong>, kies de repo. Bij <strong>Local path</strong> kies je je projectmap. Klik <strong>Clone</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Zet het Unity project in die map: <strong>Assets</strong>, <strong>Packages</strong> en <strong>ProjectSettings</strong> direct in de root.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Unity Hub: <strong>Add &gt; Add project from disk</strong>, kies de map.</div></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/04-github-nieuwe-repo.png\"><img src=\"img/les2/04-github-nieuwe-repo.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">github.com New repository: naam ingevuld, Add README aan, Add .gitignore op Unity</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/04-github-nieuwe-repo.png</code></figure><figure class=\"media-fig\" data-img=\"img/les2/04-desktop-clone-repository.png\"><img src=\"img/les2/04-desktop-clone-repository.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">GitHub Desktop: File &gt; Clone repository, repo gekozen, veld Local path ingevuld, knop Clone</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/04-desktop-clone-repository.png</code></figure></div>\n                    ",
+    "notes": "Eerst op github.com de repo maken, dan File > Clone repository in GitHub Desktop. Nieuw project: kopieer de mappen Assets, Packages en ProjectSettings in de gekloonde map, zodat Unity.gitignore ze goed behandelt. Controleer dat Assets direct in de repo-map staat en niet in een submap. Daarna openen via Unity Hub > Add > Add project from disk.",
+    "deepdive": {
+      "analogy": "De repo is de gedeelde werkplaats. Het .gitignore is de lijst met dingen die niet mee de deur uit gaan.",
+      "whatIsWhat": "<strong>Unity.gitignore:</strong> negeert Library, Temp, Logs, Obj, Build en UserSettings.<br><strong>Root:</strong> Assets moet direct in de repo-map staan.",
+      "trap": "Het Unity project in een submap zetten, of committen voordat de Unity-.gitignore er staat.",
+      "rule": "Eerst .gitignore, dan pas de eerste commit."
+    }
+  },
+  {
+    "category": "Repo Setup",
+    "title": "Stap 2: Git LFS voor Grote Bestanden",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Wat is Git LFS?</div><div class=\"info-card-text\">Git bewaart elke versie van elk bestand. Grote bestanden (.fbx, .psd, .wav) maken je repo enorm. Met Git LFS staat in je repo alleen een klein verwijsbestand. Het echte bestand staat op aparte opslag bij GitHub.</div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Waarom doen we dit?</div><div class=\"info-card-text\"><ul><li><strong>Snel:</strong> je repo blijft klein bij clone en pull.</li><li><strong>Limiet:</strong> GitHub weigert bestanden boven 100 MiB.</li><li><strong>Geen merge:</strong> bij een conflict kies je één versie.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Let Op</div><div class=\"info-card-text\"><ul><li>Zonder Git LFS krijgt een teamlid alleen verwijsbestandjes: kapotte modellen en geluid in Unity</li><li>GitHub Desktop vraagt bij het clonen soms om Git LFS te initialiseren: bevestig dit</li></ul></div></div></div>",
+    "notes": "LFS alleen voor grote binaire bestanden. Scenes en prefabs niet via LFS: dan kan Git ze niet meer samenvoegen. Wat al zonder LFS gecommit is, wordt niet achteraf omgezet. Daarom nu instellen, voor de eerste commit van assets. In GitHub Desktop is er geen scherm om LFS-regels toe te voegen: dat gaat via het bestand .gitattributes (volgende slide). Volgens de GitHub-docs vraagt Desktop bij het clonen van een repo met LFS om Git LFS te initialiseren. Verschijnt dat niet of krijgen studenten verwijsbestandjes, installeer dan Git LFS via git-lfs.com en clone opnieuw.",
+    "deepdive": {
+      "analogy": "LFS is een pakhuis voor zware pakketten. In Git ligt alleen het bonnetje.",
+      "whatIsWhat": "<strong>Git LFS:</strong> bewaart grote bestanden buiten de gewone Git-geschiedenis.<br><strong>.gitattributes:</strong> bestand met de regels welke bestanden naar LFS gaan.<br><strong>Limieten:</strong> GitHub waarschuwt vanaf 50 MiB en blokkeert boven 100 MiB.<br><strong>Gratis LFS:</strong> GitHub Free geeft 10 GiB opslag en 10 GiB bandwidth.",
+      "trap": "LFS pas aanzetten nadat grote bestanden al zijn gecommit.",
+      "rule": "Eerst .gitattributes committen, dan de grote bestanden."
+    }
+  },
+  {
+    "category": "Repo Setup",
+    "title": "Stap 2b: Het .gitattributes Bestand",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Eén Keer Toevoegen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Eén teamlid zet <strong>.gitattributes</strong> in de root van de repo, naast <strong>Assets</strong>. Inhoud staat hiernaast.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>GitHub Desktop: tab <strong>Changes</strong>, vul <strong>Summary</strong> in, klik <strong>Commit to main</strong>, dan <strong>Push origin</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>De anderen klikken <strong>Fetch origin</strong> en <strong>Pull origin</strong>. Dit gebeurt voor de eerste assets.</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>.gitattributes</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre>*.fbx filter=lfs diff=lfs merge=lfs -text\n*.psd filter=lfs diff=lfs merge=lfs -text\n*.wav filter=lfs diff=lfs merge=lfs -text\n*.mp3 filter=lfs diff=lfs merge=lfs -text\n*.tga filter=lfs diff=lfs merge=lfs -text\n*.exr filter=lfs diff=lfs merge=lfs -text\n*.unitypackage filter=lfs diff=lfs merge=lfs -text\n<span class=\"comm\"># png: alleen grote bestanden, voeg dan zelf een regel toe</span></pre></div></div>",
+    "notes": "Geen terminal nodig: het bestand .gitattributes bevat de LFS-regels. Een teamlid maakt het in een teksteditor, slaat het op in de root van de repo en commit het eerst. Of de docent geeft een starter-repo waar het al in staat. Daarna krijgt iedereen het via Pull origin. Kleine png's hoeven niet via LFS; heel grote png's of psd's wel. Nooit .unity, .prefab of .asset.",
+    "deepdive": {
+      "analogy": "Het bestand .gitattributes is het bordje bij het pakhuis: deze soorten bestanden gaan naar binnen.",
+      "whatIsWhat": "<strong>.gitattributes:</strong> tekstbestand met regels welke bestandstypen via Git LFS gaan.<br><strong>filter=lfs:</strong> zegt dat dit type via LFS wordt bewaard.<br><strong>Pull origin:</strong> haalt het bestand bij je teamgenoten binnen.",
+      "trap": "Het bestand pas toevoegen nadat grote bestanden al zijn gecommit.",
+      "rule": "Eerst .gitattributes committen, dan de grote bestanden."
+    }
+  },
+  {
+    "category": "Repo Setup",
+    "title": "Stap 3: Eerste Commit en Push",
+    "images": [
+      {
+        "file": "07-repo-zonder-library.png",
+        "want": "github.com repo-bestandenlijst met Assets, Packages, ProjectSettings en .gitignore, zonder Library"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Commit en Push</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Tab <strong>Changes</strong>: alle bestanden aangevinkt. Vul bij <strong>Summary</strong> een bericht in, bijvoorbeeld Add Unity project setup.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Klik <strong>Commit to main</strong>, daarna <strong>Push origin</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Controleer en Deel</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Kijk op github.com: <strong>Library</strong> staat er niet, de <strong>.meta</strong> bestanden wel.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Elk teamlid kloont de repo (<strong>File &gt; Clone repository</strong>) of klikt <strong>Fetch origin</strong> en <strong>Pull origin</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Open de map in Unity Hub. Er mogen geen fouten komen.</div></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/07-repo-zonder-library.png\"><img src=\"img/les2/07-repo-zonder-library.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">github.com repo-bestandenlijst met Assets, Packages, ProjectSettings en .gitignore, zonder Library</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/07-repo-zonder-library.png</code></figure></div>\n                    ",
+    "notes": "De eerste push gaat rechtstreeks naar main, daarna alleen nog via branches. Controleer samen op het scherm van één team of Library echt ontbreekt.",
+    "deepdive": {
+      "analogy": "De eerste commit is de startfoto van het project. Alles wat erna komt, bouwt hierop.",
+      "whatIsWhat": "<strong>Commit:</strong> legt de aangevinkte bestanden vast, .gitignore houdt de rest buiten beeld.<br><strong>Push origin:</strong> stuurt je commit naar GitHub.",
+      "trap": "Teamgenoten openen het project zonder eerst te pullen.",
+      "rule": "Pas verder als iedereen het project kan openen."
+    }
+  },
+  {
+    "category": "Teamregels",
+    "title": "Teamregels 1: Scenes en Prefabs",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Vier Vaste Regels</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Nooit</strong> twee mensen tegelijk in dezelfde scene.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Alles wat je bouwt is een <strong>Prefab</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Eén persoon per prefab tegelijk. Spreek af wie wat doet.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Asset en <strong>.meta</strong> altijd samen committen.</div></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">De Scene</div><div class=\"info-card-text\">Een scene als <strong>Main_Level</strong> bevat alleen vaste geometrie en lege spawn points. Dingen die jij bouwt zitten in een prefab.</div></div></div>",
+    "notes": "Dit zijn de belangrijkste regels. Elk teamlid bouwt een eigen prefab en zet die los op een branch. Alleen één persoon past de scene aan, bijvoorbeeld om een prefab op een spawn point te plaatsen. Hou de afspraken zichtbaar, bijvoorbeeld in de README.",
+    "deepdive": {
+      "analogy": "De scene is het toneel, prefabs zijn de acteurs. Acteurs repeteren los, het toneel is er maar één.",
+      "whatIsWhat": "<strong>Prefab:</strong> eigen bestand, dus geen conflict met andermans werk.<br><strong>Spawn point:</strong> lege plek in de scene waar een prefab komt.",
+      "trap": "Snel even iets in de scene zetten terwijl een ander die ook open heeft.",
+      "rule": "Eén scene, één eigenaar tegelijk."
+    }
+  },
+  {
+    "category": "Teamregels",
+    "title": "Teamregels 2: Pull, Commit en Push",
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Vier Vaste Regels</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\"><strong>Pull origin</strong> voor je begint.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Kleine commits, vaak, met duidelijke berichten.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Eigen branch: <strong>feature/naam-onderwerp</strong>. Nooit direct op <strong>main</strong>. Merge via Pull Request met review.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div spellcheck=\"false\">Push alleen als het project werkt: geen rode errors in de <strong>Console</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">In GitHub Desktop</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\"><strong>Current Branch &gt; New Branch</strong>: feature/sam-deur.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Tab <strong>Changes</strong>, <strong>Summary</strong> invullen, <strong>Commit to feature/sam-deur</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\"><strong>Publish branch</strong>, daarna <strong>Create Pull Request</strong> (opent github.com).</div></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/09-desktop-new-branch.png\"><img src=\"img/les2/09-desktop-new-branch.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">GitHub Desktop: Current Branch uitgeklapt met knop New Branch, venster Create a Branch met naam feature/sam-deur</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/09-desktop-new-branch.png</code></figure></div>\n                    ",
+    "notes": "Ze kennen branches en PR's. Nadruk op: werkt het project voor je pusht? Een teamgenoot die pullt en rode errors krijgt, kan niet meer werken. Een review is ook een controle op scene- en meta-wijzigingen.",
+    "deepdive": {
+      "analogy": "Je lost niet op een kapotte brug af: je test eerst of de brug het houdt voordat anderen erover lopen.",
+      "whatIsWhat": "<strong>feature/...:</strong> naamafspraak voor een branch per onderwerp.<br><strong>Pull Request:</strong> verzoek om je branch in main te voegen, met review.",
+      "trap": "Dagen werken zonder pull en dan één enorme push.",
+      "rule": "Pull, werk, test, commit, push. Klein en vaak."
+    },
+    "images": [
+      {
+        "file": "09-desktop-new-branch.png",
+        "want": "GitHub Desktop: Current Branch uitgeklapt met knop New Branch, venster Create a Branch met naam feature/sam-deur"
+      }
+    ]
+  },
+  {
+    "category": "Teamregels",
+    "title": "Als Er Toch een Conflict Is",
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Bij een Scene of Prefab Conflict</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\"><strong>Stop.</strong> Los het niet blind op.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">GitHub Desktop toont de bestanden met een conflict. Kies per bestand één versie: de jouwe of die van je teamgenoot.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Open Unity en doe jouw wijziging opnieuw. Vertel het team.</div></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\" spellcheck=\"false\">Let Op</div><div class=\"info-card-text\" spellcheck=\"false\"><ul><li spellcheck=\"false\">Laat nooit conflictmarkeringen (<code spellcheck=\"false\">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>) in het bestand staan</li><li spellcheck=\"false\">Voorkomen is beter dan oplossen</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/10-desktop-conflict.png\"><img src=\"img/les2/10-desktop-conflict.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">GitHub Desktop: conflictvenster met de lijst bestanden met een conflict en de keuze per bestand</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/10-desktop-conflict.png</code></figure></div>\n                    ",
+    "notes": "Doel: geen paniek en geen handmatig knippen in YAML. Kies in GitHub Desktop één versie per bestand (of open het in je editor), bouw de eigen wijziging opnieuw in Unity. Laat een voorbeeld zien: twee mensen passen dezelfde prefab aan en de tweede krijgt het conflict bij Pull origin.",
+    "deepdive": {
+      "analogy": "Twee mensen tekenen op hetzelfde blad. Je kiest één blad en tekent jouw stuk opnieuw.",
+      "whatIsWhat": "<strong>Eén versie kiezen:</strong> per bestand de eigen of de andere versie nemen, niet knippen in YAML.<br><strong>Smart Merge (UnityYAMLMerge):</strong> Unity-tool die scenes en prefabs slimmer kan samenvoegen. Kan helpen, zie docs.unity.com.<br><strong>Bestand reserveren:</strong> met Git LFS locking kan dat. Spreek liever af wie wat bewerkt.",
+      "trap": "Alle markeringen weghalen zonder te kijken en Unity laten openen.",
+      "rule": "Eén versie kiezen, jouw wijziging opnieuw doen."
+    },
+    "images": [
+      {
+        "file": "10-desktop-conflict.png",
+        "want": "GitHub Desktop: conflictvenster met de lijst bestanden met een conflict en de keuze per bestand"
+      }
+    ]
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint 1: Klaar voor Teamwerk",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 1: Zie Je Dit?</div><div class=\"info-card-text\">Dan klaar.<ul><li>De repo staat op GitHub, <strong>Library</strong> niet, <strong>.meta</strong> wel</li><li>Een teamgenoot kan de repo klonen en het project openen zonder fouten</li><li>Jullie weten wie welke prefab en branch heeft</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Lukt Het Niet?</div><div class=\"info-card-text\"><ul><li><strong>Library staat erin:</strong> controleer of .gitignore de Unity-versie is. Staat Library al in een commit, vraag docent of teamgenoot, of begin opnieuw met een nieuwe repo</li><li><strong>Roze materialen of missing scripts:</strong> .meta niet gecommit. Vink ze aan in Changes, commit en push</li></ul></div></div></div>",
+    "notes": "Loop langs elk team. Laat een teamgenoot echt clonen en openen, niet alleen zeggen dat het kan. Library al in de repo: er is geen knop in GitHub Desktop om dit achteraf te herstellen. Help het team een nieuwe repo te starten met de Unity-.gitignore. Pas daarna door naar C#.",
+    "deepdive": {
+      "analogy": "Eerst controleren dat iedereen dezelfde werkplaats heeft, dan pas gaan bouwen.",
+      "whatIsWhat": "<strong>.gitignore:</strong> lijst met bestanden die Git negeert. Staat Library al in de repo, dan helpt een .gitignore achteraf niet meer.<br><strong>Missing script:</strong> Unity vindt het .meta bestand niet en kan het script niet koppelen.",
+      "trap": "Zeggen dat het werkt zonder dat een ander het heeft geprobeerd.",
+      "rule": "Het werkt pas als een ander het kan klonen en openen."
+    }
+  },
+  {
+    "category": "C# Basis",
+    "title": "Van JavaScript naar C#",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>JavaScript</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">let</span> snelheid = 90;\n<span class=\"kw\">function</span> <span class=\"fn\">draai</span>() { }\nconsole.<span class=\"fn\">log</span>(<span class=\"str\">\"hoi\"</span>);</pre></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>C#</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">float</span> snelheid = 90f;\n<span class=\"kw\">void</span> <span class=\"fn\">Draai</span>() { }\n<span class=\"type\">Debug</span>.<span class=\"fn\">Log</span>(<span class=\"str\">\"hoi\"</span>);</pre></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Wat Is Anders?</div><div class=\"info-card-text\"><ul><li>Je schrijft het <strong>type</strong> erbij</li><li><code>;</code> en <code>{ }</code> zijn verplicht</li><li><strong>Hoofdletters</strong> tellen: <code>Debug</code> is niet <code>debug</code></li><li><code>class Naam : MonoBehaviour</code></li></ul></div></div></div>",
+    "notes": "Studenten kennen JavaScript. Dit is geen uitleg wat een variabele of functie is, alleen wat anders is in C#. Laat de twee blokken naast elkaar zien. Een class die MonoBehaviour uitbreidt kan als script op een object. Een kommagetal als float eindigt op f.",
+    "deepdive": {
+      "analogy": "JavaScript is een gesprek waarin je alles mag zeggen. C# is een formulier: elk vakje heeft een type en een puntkomma.",
+      "whatIsWhat": "<strong>Type:</strong> wat voor waarde erin past (int, float, bool, string).<br><strong>void:</strong> de methode geeft niets terug.<br><strong>MonoBehaviour:</strong> basisklasse voor scripts op een GameObject.",
+      "differences": "JS: let en function, types vrij. C#: type vooraf, methodes met returntype, case-sensitive net als JS maar strenger over typen.",
+      "trap": "<code>float x = 1.5;</code> zonder f geeft een fout.",
+      "rule": "Type, naam, waarde, puntkomma."
+    }
+  },
+  {
+    "category": "Scripts",
+    "title": "Stap 4: Je Eerste Script",
+    "images": [
+      {
+        "file": "13-script-in-project.png",
+        "want": "Project-venster met map Assets/Scripts en daarin het script Draaier (MonoBehaviour Script)"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Script Maken</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Maak in je eigen prefab-map een map <strong>Scripts</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Rechtsklik in <strong>Project</strong>: <strong>Create &gt; Scripting &gt; MonoBehaviour Script</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Naam: <strong>Draaier</strong>. Let op de hoofdletter D.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div spellcheck=\"false\">Sleep <strong>Draaier</strong> op een kubus in je prefab.</div></div><div class=\"step-item\"><div class=\"step-num\">5</div><div spellcheck=\"false\">Dubbelklik op het script. De code editor opent.</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\" spellcheck=\"false\">Teamregel</div><div class=\"info-card-text\" spellcheck=\"false\">Werk in je <strong>eigen prefab</strong>. Open de gedeelde scene niet om te testen.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/13-script-in-project.png\"><img src=\"img/les2/13-script-in-project.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">Project-venster met map Assets/Scripts en daarin het script Draaier (MonoBehaviour Script)</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/13-script-in-project.png</code></figure></div>\n                    ",
+    "notes": "Koppel aan de teamregels: prefab-first. Laat studenten een kubus in een eigen prefab maken (Prefab Mode: dubbelklik op de prefab). Het menu is in Unity 6 ook te vinden onder Assets > Create > Scripting; rechtsklik in Project werkt altijd. De klassenaam komt uit de bestandsnaam, dus meteen goed typen. Controleer in de Inspector dat Draaier als component op de kubus staat.",
+    "deepdive": {
+      "analogy": "De map Scripts is je gereedschapskast. Alle code komt daar, zodat je niets kwijtraakt.",
+      "whatIsWhat": "<strong>MonoBehaviour:</strong> de basis waardoor een script op een GameObject kan.<br><strong>Prefab Mode:</strong> je prefab apart openen en bewerken.",
+      "trap": "De bestandsnaam later aanpassen. Dan klopt de klassenaam niet meer.",
+      "rule": "Een script krijgt meteen de goede naam, met hoofdletter."
+    }
+  },
+  {
+    "category": "Scripts",
+    "title": "Hoe Ziet een Script Eruit?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Assets/Scripts/Draaier.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n\n<span class=\"kw\">public</span> <span class=\"kw\">class</span> <span class=\"type\">Draaier</span> : <span class=\"type\">MonoBehaviour</span>\n{\n    <span class=\"kw\">void</span> <span class=\"type\">Start</span>() { }\n    <span class=\"kw\">void</span> <span class=\"type\">Update</span>() { }\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>using UnityEngine;</code> haalt de code van Unity erbij. Zoals <code>import</code> in JS</li><li><code>public class Draaier : MonoBehaviour</code> is jouw script. De naam is gelijk aan de bestandsnaam</li><li><code>void</code> geeft niets terug. <code>{ }</code> omsluiten het blok</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Start en Update</div><div class=\"info-card-text\"><ul><li><strong>Start:</strong> één keer, als het spel begint</li><li><strong>Update:</strong> elk frame, steeds opnieuw</li><li>Unity roept ze zelf aan</li></ul></div></div></div>",
+    "notes": "Loop de code regel voor regel door op het scherm. using: welke bibliotheek je gebruikt, vergelijk met import. class: het script is een klasse; de naam moet gelijk zijn aan de bestandsnaam. : MonoBehaviour betekent dat het script op een GameObject kan. void betekent dat de methode niets teruggeeft. Accolades { } omsluiten een blok, net als in JavaScript. Start draait één keer, Update elk frame.",
+    "deepdive": {
+      "analogy": "Start is het opstarten van een machine. Update is het draaien van het wiel, de hele tijd.",
+      "whatIsWhat": "<strong>using:</strong> zegt welke code-bibliotheek je gebruikt.<br><strong>class:</strong> de bouwtekening van je script.<br><strong>MonoBehaviour:</strong> maakt van de klasse een script voor een GameObject.<br><strong>Start / Update:</strong> namen die Unity herkent.",
+      "trap": "Code die één keer moet gebeuren in Update zetten. Dan gebeurt het honderden keren.",
+      "rule": "Eenmalig in Start, doorlopend in Update."
+    }
+  },
+  {
+    "category": "Scripts",
+    "title": "Stap 5: Hallo Unity",
+    "images": [
+      {
+        "file": "15-console-hallo-unity.png",
+        "want": "Window > General > Console met de melding Hallo Unity en het Play-icoon actief"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"code-container\"><div class=\"jb-header-tab\">\n                    <div style=\"display:flex; align-items:center; gap:6px;\">\n                        <span class=\"jb-csharp-icon\">C#</span>\n                        <span class=\"jb-filename\">Script.cs</span>\n                    </div>\n                    <button class=\"code-copy-btn\" onclick=\"SlideDeck.copyCode(this)\" title=\"Kopieer code\">Kopieer</button>\n                </div><div class=\"code-header\"><span spellcheck=\"false\">Draaier.cs: Start</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre spellcheck=\"false\"><code spellcheck=\"false\"><span class=\"jb-keyword\">void</span> <span class=\"jb-method\">Start</span>()\n{\n    <span class=\"jb-type\">Debug</span>.<span class=\"jb-method\">Log</span>(\"<span class=\"jb-type\">Hallo</span> <span class=\"jb-type\">Unity</span>\");\n}</code></pre></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Testen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Typ de regel in <strong>Start</strong>. Sla op met <strong>Ctrl/Cmd + S</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\">Ga terug naar Unity. Open je prefab-scene en klik <strong>Play</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Open <strong>Window &gt; General &gt; Console</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div spellcheck=\"false\">Zie je <strong>Hallo Unity</strong>? Dit is <code spellcheck=\"false\">console.log</code> in C#.</div></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/15-console-hallo-unity.png\"><img src=\"img/les2/15-console-hallo-unity.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">Window &gt; General &gt; Console met de melding Hallo Unity en het Play-icoon actief</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/15-console-hallo-unity.png</code></figure></div>\n                    ",
+    "notes": "Debug.Log is de C# versie van console.log. Let op de puntkomma en de hoofdletters D en L. Unity compileert automatisch na het opslaan; even wachten. Wie niets ziet: staat het script echt op de kubus, en staat de kubus in de scene die speelt? Een prefab op zich draait niet; zet hem in een eigen test-scene of gebruik Prefab Mode als je alleen wilt zien of de code compileert.",
+    "deepdive": {
+      "analogy": "Debug.Log is een briefje dat je code naar jou schrijft: ik ben hier geweest.",
+      "whatIsWhat": "<strong>Console:</strong> het venster waar meldingen en fouten verschijnen.<br><strong>Debug.Log:</strong> schrijf een tekst naar de Console.<br><strong>Play:</strong> start je scene.",
+      "differences": "JavaScript: console.log(). Unity: Debug.Log(). Zelfde doel.",
+      "trap": "Vergeten op te slaan, of de puntkomma weglaten.",
+      "rule": "Eerst opslaan, dan Play."
+    }
+  },
+  {
+    "category": "C# Basis",
+    "title": "Typen en Variabelen in C#",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Drie Basis Typen</div><div class=\"info-card-text\"><ul><li><code>float</code>: kommagetal <code>1.5f</code></li><li><code>int</code>: heel getal <code>3</code></li><li><code>bool</code>: <code>true</code> of <code>false</code></li></ul></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Voorbeeld</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">float</span> snelheid = 90f;\n<span class=\"kw\">int</span> levens = 3;\n<span class=\"kw\">bool</span> draaien = <span class=\"kw\">true</span>;\n<span class=\"kw\">string</span> naam = <span class=\"str\">\"Kubus\"</span>;\n<span class=\"type\">Vector3</span> plek = <span class=\"kw\">new</span> <span class=\"type\">Vector3</span>(0, 1, 0);</pre></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Nog Twee Typen</div><div class=\"info-card-text\"><ul><li><code>string</code>: tekst tussen aanhalingstekens</li><li><code>Vector3</code>: drie getallen x, y, z voor een plek of richting</li><li>Kommagetal? Zet <code>f</code> erachter: <code>90f</code></li></ul></div></div></div>",
+    "notes": "Studenten kennen variabelen. Alleen het type is nieuw. float, int, bool en string kennen ze als idee uit JS. Vector3 is een Unity-type met drie getallen: een plek (x, y, z) of een richting. Het is een nieuw type, daarom new Vector3(...). De f achter een kommagetal is verplicht bij float. JS: let x = 5; C#: int x = 5;",
+    "deepdive": {
+      "analogy": "Een variabele is een doosje met een etiket. Het type bepaalt wat erin past.",
+      "whatIsWhat": "<strong>float:</strong> getal met komma.<br><strong>int:</strong> heel getal.<br><strong>bool:</strong> aan of uit.<br><strong>string:</strong> tekst.<br><strong>Vector3:</strong> x, y en z samen.",
+      "differences": "JavaScript kiest het type zelf (let, const). C# wil dat jij het type opschrijft.",
+      "trap": "<code>float x = 1.5;</code> zonder f geeft een fout.",
+      "rule": "Type, naam, waarde, puntkomma."
+    }
+  },
+  {
+    "category": "C# Basis",
+    "title": "Variabelen in de Inspector",
+    "images": [
+      {
+        "file": "17-inspector-snelheid.png",
+        "want": "Inspector van de kubus met het component Draaier (Script) en het veld Snelheid met waarde 90"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"code-container\"><div class=\"jb-header-tab\">\n                    <div style=\"display:flex; align-items:center; gap:6px;\">\n                        <span class=\"jb-csharp-icon\">C#</span>\n                        <span class=\"jb-filename\">Draaier.cs</span>\n                    </div>\n                    <button class=\"code-copy-btn\" onclick=\"SlideDeck.copyCode(this)\" title=\"Kopieer code\">Kopieer</button>\n                </div><div class=\"code-header\"><span spellcheck=\"false\">Draaier.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre spellcheck=\"false\"><code spellcheck=\"false\"><span class=\"jb-keyword\">public</span> <span class=\"jb-keyword\">class</span> <span class=\"jb-type\">Draaier</span> : <span class=\"jb-type\">MonoBehaviour</span>\n{\n    <span class=\"jb-keyword\">public</span> <span class=\"jb-keyword\">float</span> <span class=\"jb-plain\">snelheid</span> = <span class=\"jb-number\">90f</span>;\n\n    <span class=\"jb-attr\">[SerializeField]</span> <span class=\"jb-keyword\">private</span> <span class=\"jb-keyword\">float</span> <span class=\"jb-plain\">hoogte</span> = <span class=\"jb-number\">1f</span>;\n\n    <span class=\"jb-keyword\">void</span> <span class=\"jb-method\">Start</span>() { }\n    <span class=\"jb-keyword\">void</span> <span class=\"jb-method\">Update</span>() { }\n}</code></pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\" spellcheck=\"false\">Twee Manieren</div><div class=\"info-card-text\" spellcheck=\"false\"><ul><li spellcheck=\"false\"><code spellcheck=\"false\">public</code>: zichtbaar in de <strong>Inspector</strong> en voor andere scripts</li><li spellcheck=\"false\"><code spellcheck=\"false\">[SerializeField] private</code>: zichtbaar in de Inspector, alleen voor dit script</li><li spellcheck=\"false\"><code spellcheck=\"false\">snelheid</code> wordt <strong>Snelheid</strong>. Pas de waarde aan tijdens <strong>Play</strong></li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/17-inspector-snelheid.png\"><img src=\"img/les2/17-inspector-snelheid.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">Inspector van de kubus met het component Draaier (Script) en het veld Snelheid met waarde 90</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/17-inspector-snelheid.png</code></figure></div>\n                    ",
+    "notes": "Sla op en ga terug naar Unity: in de Inspector staan nu Snelheid en Hoogte bij Draaier. Unity maakt van de variabelenaam een nette titel met hoofdletter. public mag ook door andere scripts gebruikt worden. [SerializeField] private zet hem in de Inspector, maar andere scripts kunnen er niet bij. Voor deze les is public prima. Wijzigingen tijdens Play gaan weg na Stop; dat is normaal.",
+    "deepdive": {
+      "analogy": "Een public variabele is een draaiknop aan de buitenkant van het apparaat.",
+      "whatIsWhat": "<strong>public:</strong> zichtbaar buiten het script, ook in de Inspector.<br><strong>[SerializeField] private:</strong> alleen in de Inspector, niet voor andere scripts.<br><strong>Tip:</strong> [Range(0, 360)] geeft een schuifbalk. [Header(\"Beweging\")] zet een kopje boven je velden.<br><strong>Inspector:</strong> venster met alle instellingen van het object.",
+      "trap": "Waarde veranderen tijdens Play en verwachten dat die blijft na Stop.",
+      "rule": "Wil je het in de Inspector, zet er public of [SerializeField] voor."
+    }
+  },
+  {
+    "category": "Beweging",
+    "title": "Stap 6: Object Laten Draaien",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Draaier.cs: Update</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">void</span> <span class=\"fn\">Update</span>()\n{\n    transform.<span class=\"fn\">Rotate</span>(0, snelheid * <span class=\"type\">Time</span>.deltaTime, 0);\n}</pre></div><div class=\"info-card cyan\"><div class=\"info-card-title\">Time.deltaTime</div><div class=\"info-card-text\">De tijd tussen twee frames. Zo draait het object overal even snel.</div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Met een vinkje</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">public bool</span> draaien = <span class=\"kw\">true</span>;\n\n<span class=\"kw\">void</span> <span class=\"fn\">Update</span>()\n{\n    <span class=\"kw\">if</span> (draaien)\n    {\n        transform.<span class=\"fn\">Rotate</span>(0, snelheid * <span class=\"type\">Time</span>.deltaTime, 0);\n    }\n}</pre></div><div class=\"info-card purple\"><div class=\"info-card-title\">Draaien Wordt een Vinkje</div><div class=\"info-card-text\">Een <code>bool</code> is een vinkje in de Inspector. Zet het uit tijdens Play.</div></div></div>",
+    "notes": "Rotate(x, y, z) draait in graden. Y is om de verticale as. Bij 90 draait het object een kwartslag per seconde. Zonder Time.deltaTime draait het per frame en is een snelle pc sneller dan een bril. De if kennen ze uit JavaScript; alleen de syntax is nieuw: haakjes om de voorwaarde, accolades om het blok. Laat ze het vinkje aan en uit zetten tijdens Play.",
+    "deepdive": {
+      "analogy": "Time.deltaTime is een klokje: je draait niet per stap maar per seconde.",
+      "whatIsWhat": "<strong>transform:</strong> positie, rotatie en schaal van het object.<br><strong>Rotate:</strong> draai het object een stukje.<br><strong>Graden:</strong> 360 is een hele cirkel.",
+      "trap": "Time.deltaTime weglaten. Dan hangt de snelheid af van de computer.",
+      "rule": "Beweging in Update vermenigvuldig je met Time.deltaTime."
+    }
+  },
+  {
+    "category": "C# Basis",
+    "title": "Eigen Methodes",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Draaier.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">void</span> <span class=\"type\">Update</span>()\n{\n    <span class=\"type\">Draai</span>(snelheid);\n}\n\n<span class=\"kw\">void</span> <span class=\"type\">Draai</span>(<span class=\"kw\">float</span> tempo)\n{\n    <span class=\"kw\">float</span> stap = tempo * <span class=\"type\">Time</span>.deltaTime;\n    transform.<span class=\"type\">Rotate</span>(0, stap, 0);\n}</pre></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Met een waarde terug</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">float</span> <span class=\"type\">Dubbel</span>(<span class=\"kw\">float</span> x)\n{\n    <span class=\"kw\">return</span> x * 2f;\n}\n\n<span class=\"kw\">bool</span> <span class=\"type\">IsSnel</span>()\n{\n    <span class=\"kw\">return</span> snelheid &gt; 100f;\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Zoals een JS function</div><div class=\"info-card-text\"><ul><li>JS: <code>function draai(tempo) { }</code></li><li>C#: <code>void Draai(float tempo) { }</code></li><li><code>void</code>: geeft niets terug. <code>float</code> of <code>bool</code>: geeft een waarde terug met <code>return</code></li></ul></div></div></div>",
+    "notes": "Ze kennen functies uit JavaScript. Hier dus alleen de C# schrijfwijze. Een methode is een functie in een klasse. void: geen terugkeerwaarde. Tussen haakjes staan de parameters, met type erbij. Aanroepen doe je met de naam: Draai(snelheid). Een methode met float of bool vooraan geeft een waarde terug met return. Methodes houden Update kort en leesbaar. De methode moet binnen de klasse staan, niet erbuiten.",
+    "deepdive": {
+      "analogy": "Een methode is een knop op een afstandsbediening. Je drukt erop (aanroepen) en hij doet zijn werk. Een parameter is de stand die je meegeeft.",
+      "whatIsWhat": "<strong>Methode:</strong> een functie in een klasse.<br><strong>Parameter:</strong> waarde die je meegeeft, met type.<br><strong>return:</strong> geeft een waarde terug aan de plek waar je de methode aanriep.<br><strong>void:</strong> er komt niets terug.",
+      "differences": "JS: function draai(tempo). C#: void Draai(float tempo). Het type van de parameter en van het resultaat staat erbij.",
+      "trap": "Een methode met float vooraan zonder return. Dat geeft een foutmelding. Of de methode buiten de klasse zetten.",
+      "rule": "Eerst het type terug (void of float), dan de naam, dan de parameters."
+    }
+  },
+  {
+    "category": "Fouten",
+    "title": "Fouten Lezen in de Console",
+    "images": [
+      {
+        "file": "20-console-fout.png",
+        "want": "Console met een rode foutmelding, bijvoorbeeld Draaier.cs(12,5): error CS1002: ; expected"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\" spellcheck=\"false\">Rode Melding?</div><div class=\"info-card-text\" spellcheck=\"false\">Geen paniek. Lees de melding.<ul><li spellcheck=\"false\"><strong>Bestand:</strong> Draaier.cs</li><li spellcheck=\"false\"><strong>Plek:</strong> (12,5) is regel 12, teken 5</li><li spellcheck=\"false\">Dubbelklik: je springt naar de regel</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\" spellcheck=\"false\">De Vaakste Fouten</div><div class=\"info-card-text\" spellcheck=\"false\"><ul><li spellcheck=\"false\"><strong>NullReferenceException:</strong> je gebruikt iets dat niet is ingevuld in de Inspector</li><li spellcheck=\"false\"><code spellcheck=\"false\">;</code> vergeten, of <code spellcheck=\"false\">f</code> bij <code spellcheck=\"false\">90f</code></li><li spellcheck=\"false\">Hoofdletter fout of klassenaam is niet de bestandsnaam</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/20-console-fout.png\"><img src=\"img/les2/20-console-fout.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">Console met een rode foutmelding, bijvoorbeeld Draaier.cs(12,5): error CS1002: ; expected</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/20-console-fout.png</code></figure></div>\n                    ",
+    "notes": "Fouten horen erbij. Leer ze lezen: bestand, regel, wat er verwacht wordt. NullReferenceException is de fout die ze het vaakst zien: een veld in de Inspector is leeg (None). Sleep het object erin. Soms staat de echte fout op de regel erboven. Laat studenten een puntkomma weghalen en de melding zien. Zolang er een compile-fout is, kan Play niet starten. In het team: pushen mag alleen zonder rode errors.",
+    "deepdive": {
+      "analogy": "De Console is een meldingenbord. Een rode regel zegt waar het misgaat.",
+      "whatIsWhat": "<strong>Error:</strong> rode melding.<br><strong>Warning:</strong> gele melding; het werkt wel.<br><strong>CS1002:</strong> code van de fout, handig om te googelen.<br><strong>NullReferenceException:</strong> een leeg veld (None) wordt gebruikt. Komt pas tijdens Play.",
+      "trap": "Alle fouten tegelijk willen oplossen. Begin bij de bovenste. Bij NullReferenceException: eerst de Inspector bekijken, niet de code.",
+      "rule": "Lees de eerste rode regel. Los die op. Kijk opnieuw."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint 2: Je Object Draait",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 2: Zie Je Dit?</div><div class=\"info-card-text\">Dan goed.<ul><li>Console toont <strong>Hallo Unity</strong></li><li>Het object draait</li><li><strong>Snelheid</strong> aanpassen werkt</li><li>Vinkje <strong>Draaien</strong> stopt het object</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Lukt Het Niet?</div><div class=\"info-card-text\"><ul><li>Staat <strong>Draaier</strong> op het object? Kijk in de Inspector</li><li>Is de Console rood? Lees de eerste fout</li></ul></div></div></div>",
+    "notes": "Loop rond en kijk bij iedereen of het object draait. Veelvoorkomend: script niet op het object gesleept, of een rode fout in de Console. Na dit checkpoint gaat de code naar GitHub.",
+    "deepdive": {
+      "analogy": "Een controle voor je verder bouwt.",
+      "whatIsWhat": "<strong>Checkpoint:</strong> moment waarop je controleert of alles werkt voor de volgende stap.",
+      "trap": "Doorgaan met een rode fout in de Console.",
+      "rule": "Eerst groen, dan verder."
+    }
+  },
+  {
+    "category": "GitHub",
+    "title": "Stap 7: Commit en Push je Script",
+    "images": [
+      {
+        "file": "22-desktop-commit-pull-request.png",
+        "want": "GitHub Desktop: tab Changes met bestanden aangevinkt, Summary ingevuld, knop Commit to feature/..., en de knop Create Pull Request"
+      },
+      {
+        "file": "22-github-pull-request.png",
+        "want": "github.com Pull Request van feature/<naam>-draaier naar main, met Draaier.cs, Draaier.cs.meta, prefab en prefab.meta in Files changed"
+      }
+    ],
+    "contentHtml": "\n                        <div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\" spellcheck=\"false\">Van Script naar Main</div><div class=\"step-item\"><div class=\"step-num\">1</div><div spellcheck=\"false\">Sleep je object naar <strong>Prefabs</strong>: het wordt een prefab.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div spellcheck=\"false\"><strong>Current Branch &gt; New Branch</strong>: feature/naam.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div spellcheck=\"false\">Tab <strong>Changes</strong>: vink je bestanden aan (scene niet), <strong>Summary</strong> invullen, <strong>Commit to feature/naam</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div spellcheck=\"false\"><strong>Fetch origin</strong>, <strong>Pull origin</strong>, dan <strong>Publish branch</strong> of <strong>Push origin</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">5</div><div spellcheck=\"false\">Klik <strong>Create Pull Request</strong>. Teamgenoot is reviewer.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\" spellcheck=\"false\">Mee in de Commit</div><div class=\"info-card-text\" spellcheck=\"false\"><ul><li spellcheck=\"false\"><strong>Draaier.cs</strong> en <strong>Draaier.cs.meta</strong></li><li spellcheck=\"false\">Je prefab en <strong>.prefab.meta</strong></li><li spellcheck=\"false\">Merge naar <strong>main</strong> pas na review</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig\" data-img=\"img/les2/22-desktop-commit-pull-request.png\"><img src=\"img/les2/22-desktop-commit-pull-request.png\" alt=\"GitHub Desktop: tab Changes met bestanden aangevinkt, Summary ingevuld, knop Commit to feature/..., en de knop Create Pull Request\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">GitHub Desktop: tab Changes met bestanden aangevinkt, Summary ingevuld, knop Commit to feature/..., en de knop Create Pull Request</div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/22-desktop-commit-pull-request.png</code></figure><figure class=\"media-fig media-placeholder\" data-img=\"img/les2/22-github-pull-request.png\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"></path><circle cx=\"12\" cy=\"13\" r=\"3.5\"></circle></svg></div><div class=\"media-ph-text\">github.com Pull Request van feature/<naam>-draaier naar main, met Draaier.cs, Draaier.cs.meta, prefab en prefab.meta in Files changed</naam></div><code class=\"media-ph-file\" spellcheck=\"false\">img/les2/22-github-pull-request.png</code></figure></div>\n                    ",
+    "notes": "Laat zien dat de .meta bestanden altijd mee gaan: Unity heeft ze nodig, anders raken koppelingen kwijt. De commit message zegt wat je deed, niet 'update'. Check de Console op rode errors voor je pusht. Pull Request: de reviewer opent de branch, test de prefab en keurt goed. Alleen na review mergen. Fout gecommit? History-tab, rechtermuisknop op de commit, Revert Changes in Commit: dat maakt een nieuwe commit die de oude ongedaan maakt. Controleer in Changes dat de scene niet is aangevinkt als niemand die bewust wijzigde. Discard Changes (rechtermuisknop op een bestand) gooit je wijziging weg: gebruik het zuinig.",
+    "deepdive": {
+      "analogy": "Een branch is je eigen werktafel. De Pull Request is de vraag aan een teamgenoot: kijk even mee voor het naar de hoofdtafel gaat.",
+      "whatIsWhat": "<strong>Branch:</strong> eigen lijn van werk.<br><strong>Pull Request:</strong> verzoek om je branch in main te zetten, met review.<br><strong>.meta:</strong> Unity-bestand met de koppelingen van een asset.",
+      "trap": "De scene meecommitten zonder afspraak. Dat geeft merge-conflicten.",
+      "rule": "Eigen branch, eigen prefab, geen rode errors, dan pas een Pull Request."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 8: Objecten Koppelen",
+    "images": [
+      {
+        "file": "23-inspector-veld-deur.png",
+        "want": "Inspector met script Koppelen en het veld Deur waarin het object Deur uit de Hierarchy is gesleept"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Koppelen.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">public</span> <span class=\"type\">GameObject</span> deur;\n\n<span class=\"kw\">void</span> <span class=\"type\">Start</span>()\n{\n    deur.<span class=\"type\">GetComponent</span>&lt;<span class=\"type\">Renderer</span>&gt;().material.color = <span class=\"type\">Color</span>.red;\n    deur.transform.position = <span class=\"kw\">new</span> <span class=\"type\">Vector3</span>(0, 2, 0);\n    deur.<span class=\"type\">SetActive</span>(<span class=\"kw\">false</span>);\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>public GameObject deur</code> is een leeg vak. <strong>Sleep</strong> het object in de Inspector erin</li><li><code>GetComponent&lt;Renderer&gt;()</code> pakt een onderdeel. Hier verf je het rood</li><li><code>SetActive(false)</code> zet uit, <code>true</code> zet aan. <code>transform.position</code> verplaatst</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les2/23-inspector-veld-deur.png\"><img src=\"img/les2/23-inspector-veld-deur.png\" alt=\"Inspector met script Koppelen en het veld Deur waarin het object Deur uit de Hierarchy is gesleept\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector met script Koppelen en het veld Deur waarin het object Deur uit de Hierarchy is gesleept</div><code class=\"media-ph-file\">img/les2/23-inspector-veld-deur.png</code></figure></div>",
+    "notes": "In JavaScript zoek je een element met document.querySelector. In Unity sleep je het object in het veld in de Inspector. Dat is veiliger dan zoeken met een naam. GetComponent haalt een onderdeel (component) van een GameObject op, hier de Renderer. material.color verandert de kleur. SetActive(false) zet een object uit, het verdwijnt uit de scene. transform.position verplaatst met een Vector3. Laat de studenten het veld in de Inspector echt slepen. Zonder slepen: NullReferenceException.",
+    "deepdive": {
+      "analogy": "Het veld is een stopcontact. Jij steekt het object erin. Zonder stekker doet het script niets.",
+      "whatIsWhat": "<strong>GameObject:</strong> een object in de scene.<br><strong>GetComponent:</strong> pakt een onderdeel van een object.<br><strong>Renderer:</strong> het onderdeel dat het object tekent.<br><strong>SetActive:</strong> zet een object aan of uit.",
+      "differences": "JS: document.querySelector(\"#deur\"). Unity: public GameObject deur en slepen in de Inspector.",
+      "trap": "Het veld leeg laten. Dan krijg je een NullReferenceException tijdens Play.",
+      "rule": "Public veld maken, slepen, dan pas gebruiken."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 9: Een Speler om Mee te Testen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Speler Bouwen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>3D Object > Capsule</strong>, naam <strong>Speler</strong>. <strong>Tag</strong> bovenin de Inspector: <strong>Player</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Verwijder <strong>Capsule Collider</strong>. <strong>Add Component > Character Controller</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Sleep <strong>Main Camera</strong> onder Speler. Position 0, 0.6, 0</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Voeg <strong>Speler.cs</strong> toe. Test met <strong>Play</strong> in het Game-venster</div></div><div class=\"step-item\"><div class=\"step-num\">5</div><div>Heeft je team al een speler? Gebruik die.</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Speler.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n<span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>.<span class=\"type\">InputSystem</span>;\n\n<span class=\"kw\">public</span> <span class=\"kw\">class</span> <span class=\"type\">Speler</span> : <span class=\"type\">MonoBehaviour</span>\n{\n    <span class=\"kw\">public</span> <span class=\"kw\">float</span> tempo = 3f;\n    <span class=\"type\">CharacterController</span> cc;\n\n    <span class=\"kw\">void</span> <span class=\"type\">Start</span>() { cc = <span class=\"type\">GetComponent</span>&lt;<span class=\"type\">CharacterController</span>&gt;(); }\n\n    <span class=\"kw\">void</span> <span class=\"type\">Update</span>()\n    {\n        <span class=\"kw\">var</span> k = <span class=\"type\">Keyboard</span>.current;\n        <span class=\"type\">Vector3</span> m = <span class=\"type\">Vector3</span>.zero;\n        <span class=\"kw\">if</span> (k.wKey.isPressed) m += transform.forward;\n        <span class=\"kw\">if</span> (k.sKey.isPressed) m -= transform.forward;\n        <span class=\"kw\">if</span> (k.dKey.isPressed) m += transform.right;\n        <span class=\"kw\">if</span> (k.aKey.isPressed) m -= transform.right;\n        cc.<span class=\"type\">Move</span>(m * tempo * <span class=\"type\">Time</span>.deltaTime);\n        <span class=\"kw\">float</span> d = 90 * <span class=\"type\">Time</span>.deltaTime;\n        <span class=\"kw\">if</span> (k.rightArrowKey.isPressed) transform.<span class=\"type\">Rotate</span>(0, d, 0);\n        <span class=\"kw\">if</span> (k.leftArrowKey.isPressed) transform.<span class=\"type\">Rotate</span>(0, -d, 0);\n    }\n}</pre></div></div>",
+    "notes": "VR staat nu even op pauze: we testen in het Game-venster met het toetsenbord. De speler is een Capsule met een Character Controller en de Main Camera als kind op ooghoogte. Tag Player zet je bovenin de Inspector in de Tag-dropdown. Input: in een nieuw Unity 6 project (Universal 3D template) staat het nieuwe Input System aan en het pakket is geinstalleerd, dus Keyboard.current werkt. Controleer bij een error over UnityEngine.Input via Edit > Project Settings > Player > Other Settings > Active Input Handling: kies Input System Package (New) of Both en laat Unity herstarten. Loop de code regel voor regel door: using, Keyboard.current, de vier if-regels voor W A S D, cc.Move en de twee pijltjes. Er is geen zwaartekracht: zet de capsule op de vloer. Heeft het team al een speler of character, gebruik die en voeg alleen de tag Player toe.",
+    "deepdive": {
+      "analogy": "De Character Controller is de poppetjes-stuurman: jij geeft een richting, hij loopt en botst tegen muren.",
+      "whatIsWhat": "<strong>Regel voor regel:</strong> using UnityEngine.InputSystem geeft toegang tot Keyboard.current (het toetsenbord). var k laat C# het type kiezen. Vector3 m is de looprichting, eerst 0, 0, 0. Is W ingedrukt (isPressed)? Dan telt m de richting vooruit erbij (transform.forward). cc.Move loopt die kant op, keer tempo en Time.deltaTime. De pijltjes draaien de speler om de Y-as.<br><strong>Tag:</strong> label op een GameObject, hier Player.<br><strong>Character Controller:</strong> beweegt een speler en botst tegen muren, zonder Rigidbody.",
+      "trap": "Een foutmelding over UnityEngine.Input: dan staat Active Input Handling op Input Manager (Old). Zet hem op Input System Package (New) of Both. Ook: de Capsule Collider laten staan naast de Character Controller.",
+      "rule": "Eén Speler met tag Player, en Active Input Handling goed."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 10: Triggers: OnTriggerEnter",
+    "images": [
+      {
+        "file": "25-box-collider-is-trigger.png",
+        "want": "Inspector van de kubus met Box Collider, het vinkje Is Trigger aan en het script Zone"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Zone.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">void</span> <span class=\"type\">OnTriggerEnter</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"kw\">if</span> (other.<span class=\"type\">CompareTag</span>(<span class=\"str\">\"Player\"</span>))\n    {\n        <span class=\"type\">Debug</span>.<span class=\"type\">Log</span>(<span class=\"str\">\"Speler is binnen\"</span>);\n    }\n}\n\n<span class=\"kw\">void</span> <span class=\"type\">OnTriggerExit</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"type\">Debug</span>.<span class=\"type\">Log</span>(<span class=\"str\">\"Speler is weg\"</span>);\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Zo Werkt Het</div><div class=\"info-card-text\"><ul><li>Zone: <strong>Collider</strong> met <strong>Is Trigger</strong> aan. De speler loopt er dwars doorheen</li><li><code>other</code> is het object dat binnenkomt. <code>CompareTag(\"Player\")</code>: is dat de speler?</li><li>Eén van de twee heeft een <strong>Rigidbody</strong>. Een Character Controller telt ook</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les2/25-box-collider-is-trigger.png\"><img src=\"img/les2/25-box-collider-is-trigger.png\" alt=\"Inspector van de kubus met Box Collider, het vinkje Is Trigger aan en het script Zone\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector van de kubus met Box Collider, het vinkje Is Trigger aan en het script Zone</div><code class=\"media-ph-file\">img/les2/25-box-collider-is-trigger.png</code></figure></div>",
+    "notes": "Koppel aan les 1: een Collider is de vorm waar iets tegenaan botst, een Rigidbody laat een object bewegen met fysica. Is Trigger zet de botsing uit: je loopt erdoor en Unity roept alleen een methode aan. OnTriggerEnter draait een keer als iets binnenkomt, OnTriggerExit als het weggaat. other is het andere object. CompareTag(\"Player\") controleert de tag. Zonder deze controle reageert de zone op alles. Laat studenten een kubus maken, Is Trigger aanzetten, Zone.cs erop en in Play erdoor lopen en de Console bekijken.",
+    "deepdive": {
+      "analogy": "Een trigger is een lichtstraal in een deuropening. Je breekt hem als je erdoor loopt en een belletje gaat.",
+      "whatIsWhat": "<strong>Is Trigger:</strong> vinkje bij een Collider. Geen botsing, wel een melding.<br><strong>OnTriggerEnter:</strong> methode die Unity aanroept als iets de trigger in gaat.<br><strong>other:</strong> de Collider van het andere object.<br><strong>CompareTag:</strong> is de tag van dit object gelijk aan de tekst?",
+      "trap": "Is Trigger vergeten, of geen Rigidbody en geen Character Controller op de speler. Dan gebeurt er niets in de Console. Ook: tag Player niet gezet.",
+      "rule": "Trigger aan, tag Player, en een van beide heeft een Rigidbody of Character Controller."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 11: Je Eerste Interactie: Een Deur",
+    "images": [
+      {
+        "file": "26-deur-hierarchy.png",
+        "want": "Hierarchy en Inspector van Deur: kind Paneel, Box Collider met Is Trigger, script Deur met veld Paneel gevuld"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Deur Bouwen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Maak in je eigen prefab een leeg object <strong>Deur</strong> met daaronder een Cube <strong>Paneel</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Op <strong>Deur</strong>: <strong>Box Collider</strong>, <strong>Is Trigger</strong> aan, groter dan het Paneel</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Voeg het script <strong>Deur</strong> toe. Sleep <strong>Paneel</strong> in het veld</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Speler erheen lopen: de deur gaat open. Daarna weg: dicht</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Deur.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">public</span> <span class=\"type\">GameObject</span> paneel;\n\n<span class=\"kw\">void</span> <span class=\"type\">OnTriggerEnter</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"kw\">if</span> (other.<span class=\"type\">CompareTag</span>(<span class=\"str\">\"Player\"</span>)) paneel.<span class=\"type\">SetActive</span>(<span class=\"kw\">false</span>);\n}\n\n<span class=\"kw\">void</span> <span class=\"type\">OnTriggerExit</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"kw\">if</span> (other.<span class=\"type\">CompareTag</span>(<span class=\"str\">\"Player\"</span>)) paneel.<span class=\"type\">SetActive</span>(<span class=\"kw\">true</span>);\n}</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les2/26-deur-hierarchy.png\"><img src=\"img/les2/26-deur-hierarchy.png\" alt=\"Hierarchy en Inspector van Deur: kind Paneel, Box Collider met Is Trigger, script Deur met veld Paneel gevuld\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Hierarchy en Inspector van Deur: kind Paneel, Box Collider met Is Trigger, script Deur met veld Paneel gevuld</div><code class=\"media-ph-file\">img/les2/26-deur-hierarchy.png</code></figure></div>",
+    "notes": "Dit is de eerste echte interactie: alle onderdelen kennen ze al. De trigger zit op het lege object Deur, het Paneel is het zichtbare deel. Zet het script niet op het Paneel zelf: als je het uitzet, gaat ook het script uit. Als je met SetActive(false) werkt, verdwijnt de deur. Alternatief voor een schuivende deur: paneel.transform.position = new Vector3(...). Maak er een prefab van in je eigen map. Test met de Speler uit stap 9.",
+    "deepdive": {
+      "analogy": "De Deur is de sensor naast de schuifdeur. Het Paneel is de deur zelf.",
+      "whatIsWhat": "<strong>Trigger-zone:</strong> onzichtbaar gebied dat reageert.<br><strong>Paneel:</strong> het zichtbare deel dat verdwijnt.<br><strong>Prefab:</strong> Deur met Paneel samen, herbruikbaar.",
+      "trap": "Het script op het Paneel zetten en dat Paneel uitzetten. Dan is ook het script uit en gaat de deur nooit meer dicht.",
+      "rule": "Trigger en zichtbaar deel zijn twee objecten."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 12: Een Toets Indrukken",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Deur.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>.<span class=\"type\">InputSystem</span>;\n\n<span class=\"kw\">bool</span> inRange;\n\n<span class=\"kw\">void</span> <span class=\"type\">OnTriggerEnter</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"kw\">if</span> (other.<span class=\"type\">CompareTag</span>(<span class=\"str\">\"Player\"</span>)) inRange = <span class=\"kw\">true</span>;\n}\n<span class=\"comm\">// OnTriggerExit: zelfde, met inRange = false</span>\n\n<span class=\"kw\">void</span> <span class=\"type\">Update</span>()\n{\n    <span class=\"kw\">if</span> (inRange &amp;&amp; <span class=\"type\">Keyboard</span>.current.eKey.wasPressedThisFrame)\n        paneel.<span class=\"type\">SetActive</span>(!paneel.activeSelf);\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>inRange</code> is een vlaggetje: staat de speler in de zone?</li><li><code>&amp;&amp;</code> betekent en: beide moeten waar zijn. <code>wasPressedThisFrame</code> is alleen waar in het frame van indrukken</li><li><code>!</code> draait om: was het paneel aan, dan wordt het uit</li></ul></div></div></div>",
+    "notes": "Voeg dit toe aan Deur.cs uit de vorige stap: haal de SetActive-regels uit Enter en Exit weg. Nu staat in Enter en Exit alleen nog het vlaggetje, de toets doet het werk. isPressed is waar zolang je de toets vasthoudt, wasPressedThisFrame maar een keer per indrukken. Dezelfde Input aanpak als bij Speler.cs. Controleer dat using UnityEngine.InputSystem bovenaan staat.",
+    "deepdive": {
+      "analogy": "Het vlaggetje is een lampje bij de deur: staat je speler in de zone, dan brandt het. Alleen als het lampje brandt, werkt de E-toets.",
+      "whatIsWhat": "<strong>bool:</strong> waar of niet waar.<br><strong>&amp;&amp;:</strong> en.<br><strong>!:</strong> niet, draait een bool om.<br><strong>wasPressedThisFrame:</strong> alleen in het frame waarin je indrukt.",
+      "differences": "JS kent ook && en !. In C# moet de voorwaarde echt een bool zijn.",
+      "trap": "isPressed gebruiken: dan klapt de deur elk frame open en dicht zolang je vasthoudt.",
+      "rule": "Een keer indrukken is wasPressedThisFrame."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 13: Voorwerp Oppakken en Score",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Score.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">public</span> <span class=\"kw\">class</span> <span class=\"type\">Score</span> : <span class=\"type\">MonoBehaviour</span>\n{\n    <span class=\"kw\">public</span> <span class=\"kw\">int</span> punten;\n\n    <span class=\"kw\">public</span> <span class=\"kw\">void</span> <span class=\"type\">VoegToe</span>(<span class=\"kw\">int</span> aantal)\n    {\n        punten += aantal;\n        <span class=\"type\">Debug</span>.<span class=\"type\">Log</span>(<span class=\"str\">\"Punten: \"</span> + punten);\n    }\n}</pre></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Munt.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">void</span> <span class=\"type\">OnTriggerEnter</span>(<span class=\"type\">Collider</span> other)\n{\n    <span class=\"kw\">if</span> (!other.<span class=\"type\">CompareTag</span>(<span class=\"str\">\"Player\"</span>)) <span class=\"kw\">return</span>;\n    other.<span class=\"type\">GetComponent</span>&lt;<span class=\"type\">Score</span>&gt;().<span class=\"type\">VoegToe</span>(1);\n    <span class=\"type\">Destroy</span>(gameObject);\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>public void VoegToe</code>: andere scripts mogen deze methode aanroepen</li><li><code>other.GetComponent&lt;Score&gt;()</code>: pak het Score-script van de speler</li><li><code>!</code> betekent niet: geen speler? <code>return</code> stopt. <code>Destroy(gameObject)</code> haalt de munt weg</li></ul></div></div></div>",
+    "notes": "Maak een Sphere of Cube, zet Is Trigger aan en voeg Munt.cs toe. Zet Score.cs op de Speler. Een score op het muntscript zelf werkt niet: elke munt heeft zijn eigen getal. Daarom een Score script op de Speler en de munt roept VoegToe aan. other.GetComponent pakt het script van het andere object. Zonder Score op de Speler krijg je een NullReferenceException. += telt op. Bij gameObject met kleine g bedoel je het object waar dit script op staat. Maak een prefab van de Munt en plaats er meer van.",
+    "deepdive": {
+      "analogy": "De Speler is een portemonnee (Score). De munt stopt zichzelf erin en verdwijnt.",
+      "whatIsWhat": "<strong>int:</strong> heel getal.<br><strong>public void VoegToe:</strong> methode met parameter, aan te roepen door andere scripts.<br><strong>gameObject:</strong> het object waar dit script op staat.<br><strong>Destroy:</strong> haalt een object uit de scene.",
+      "trap": "Score niet op de Speler gezet: NullReferenceException. Of de score op de munt zelf zetten: elke munt telt apart.",
+      "rule": "Score hoort bij de Speler, niet bij de munt."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Stap 14: Objecten Laten Verschijnen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Spawner.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"comm\">// using UnityEngine.InputSystem;</span>\n\n<span class=\"kw\">public</span> <span class=\"type\">GameObject</span> bal;\n\n<span class=\"kw\">void</span> <span class=\"type\">Update</span>()\n{\n    <span class=\"kw\">var</span> k = <span class=\"type\">Keyboard</span>.current;\n    <span class=\"kw\">if</span> (k.spaceKey.wasPressedThisFrame)\n    {\n        <span class=\"kw\">var</span> kopie = <span class=\"type\">Instantiate</span>(\n            bal, transform.position,\n            transform.rotation);\n        <span class=\"type\">Destroy</span>(kopie, 3f);\n    }\n}</pre></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Voorbereiding</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Maak een <strong>Sphere</strong> met een <strong>Rigidbody</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Sleep hem van de Hierarchy naar <strong>Project</strong>: een prefab. Verwijder hem uit de scene</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet <strong>Spawner</strong> op een leeg object boven de vloer. Sleep de prefab in het veld <strong>Bal</strong></div></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>Instantiate</code> maakt een kopie: wat, waar, welke draaiing</li><li><code>Destroy(kopie, 3f)</code> haalt hem na 3 seconden weg</li><li>Druk <strong>Space</strong> in Play</li></ul></div></div></div>",
+    "notes": "Instantiate(prefab, positie, rotatie) maakt een kopie van een prefab in de scene. Het veld Bal moet naar een prefab uit het Project-venster wijzen, niet naar een object in de scene. Destroy met een tweede getal wacht zoveel seconden. Zonder Destroy blijven er honderden ballen in je scene. Dezelfde Input aanpak als eerder. De using regel staat bovenaan het script, boven de class. Hetzelfde patroon voor items die verschijnen bij een trigger.",
+    "deepdive": {
+      "analogy": "Het prefab is een stempel. Instantiate drukt een nieuwe afdruk in de scene.",
+      "whatIsWhat": "<strong>Instantiate:</strong> maakt een kopie van een prefab.<br><strong>Prefab:</strong> herbruikbaar object als bestand.<br><strong>Destroy(obj, 3f):</strong> verwijdert obj na 3 seconden.",
+      "trap": "Een object uit de scene in het veld slepen in plaats van de prefab uit Project. Dan kopieer je een ding dat zelf ook al in de scene staat. Ook: geen Destroy, de scene loopt vol.",
+      "rule": "Instantiate een prefab, en ruim de kopieën op."
+    }
+  },
+  {
+    "category": "Interactie",
+    "title": "Interactie-Ideeën voor Je Eigen Game",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Deuren en Voorwerpen</div><div class=\"info-card-text\">Kies 2 of 3 die bij jouw concept passen.<ul><li><strong>Deur, knop of lift:</strong> trigger, toets E, SetActive of position</li><li><strong>Verzamelbaar:</strong> trigger, Score script, Destroy</li><li><strong>Valstrik en respawn:</strong> trigger, <code>transform.position</code> naar je startplek</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Licht en Beweging</div><div class=\"info-card-text\"><ul><li><strong>Licht aan/uit:</strong> <code>licht.enabled = !licht.enabled</code> bij een toets</li><li><strong>Bewegend platform:</strong> Update, <code>Translate</code>, Time.deltaTime</li><li><strong>Bericht:</strong> <code>Debug.Log</code> in een trigger</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Geluid en Kleur</div><div class=\"info-card-text\"><ul><li><strong>Geluid:</strong> <code>geluid.Play()</code> met een AudioSource</li><li><strong>Checkpoint:</strong> trigger onthoudt een plek, valstrik zet je daarheen</li><li><strong>Kleur veranderen:</strong> <code>material.color</code> bij een trigger</li></ul></div></div></div>",
+    "notes": "Dit is een menu. Studenten kiezen er 2 of 3 die bij hun eigen concept uit les 1 passen. Alle bouwstenen kennen ze al: trigger, toets, SetActive, GetComponent, Destroy, Instantiate, transform.position. Nieuw zijn alleen Light.enabled (een Light component aan of uit, via een public Light licht veld) en AudioSource.Play (public AudioSource geluid). Bij respawn met een Character Controller: zet eerst cc.enabled = false, verplaats, zet hem weer aan. Anders corrigeert de controller de plek weer terug.",
+    "deepdive": {
+      "analogy": "De ideeën zijn een menukaart. Je hoeft niet alles te bestellen, kies wat bij je game past.",
+      "whatIsWhat": "<strong>Light.enabled:</strong> lamp aan of uit.<br><strong>AudioSource.Play():</strong> speelt het geluid van de AudioSource.<br><strong>transform.position:</strong> verplaatst een object naar een plek.",
+      "trap": "Alles tegelijk willen bouwen. Of een respawn met transform.position op een speler met Character Controller: die springt terug. Zet de controller eerst even uit.",
+      "rule": "Kies 2 of 3, bouw ze klein en test elke stap."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint 3: Je Interacties Werken",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Checkpoint 3: Zie Je Dit?</div><div class=\"info-card-text\">Dan goed.<ul><li>De <strong>Speler</strong> beweegt en de camera meedraait</li><li>Een trigger reageert, in de Console of aan het object</li><li>Minstens een interactie werkt</li><li>Console zonder rode errors en gecommit op je eigen branch</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Lukt Het Niet?</div><div class=\"info-card-text\"><ul><li><strong>Trigger doet niets:</strong> Is Trigger aan? Tag <strong>Player</strong> op de Speler? Speler heeft Character Controller?</li><li><strong>NullReferenceException:</strong> staat het veld in de Inspector nog op None? Sleep het object erin</li></ul></div></div></div>",
+    "notes": "Loop rond en laat studenten hun interactie in Play laten zien. Meest voorkomend: tag niet gezet, Is Trigger vergeten, veld in de Inspector leeg, script op het verkeerde object. Een speler of voorwerp zonder Collider reageert niet. Controleer ook dat Console geen rode errors heeft en dat het werk op een eigen branch staat voor het naar de Pull Request gaat.",
+    "deepdive": {
+      "analogy": "Een controle voor je verder bouwt.",
+      "whatIsWhat": "<strong>Checkpoint:</strong> moment waarop je controleert of alles werkt voor de volgende stap.",
+      "trap": "Doorbouwen terwijl de eerste interactie nog niet werkt.",
+      "rule": "Eerst een werkende interactie, dan de volgende."
+    }
+  },
+  {
+    "category": "Werktijd",
+    "title": "Werktijd: Eerste Interacties in Je Eigen Game",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Nu Werk Je aan Je Eigen Game</div><div class=\"info-card-text\"><ul><li>Bouw de eerste 2 of 3 interacties in je blockout</li><li>Kies uit de ideeën, en pas ze aan op jouw concept</li><li>Werk in je eigen prefab en op je eigen branch</li></ul></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Zo Werk Je</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Pull origin</strong> voor je begint</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Commit klein en vaak met <strong>GitHub Desktop</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Werkt iets? Maak een <strong>Pull Request</strong>. Een teamgenoot kijkt mee</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Kom je er niet uit? Vraag het de docent</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Tip</div><div class=\"info-card-text\"><ul><li>Kleine stappen</li><li>Test na elk stukje</li></ul></div></div></div>",
+    "notes": "Dit is geen formele opdracht. De rest van de les is werktijd aan hun eigen game. Loop rond, help bij Inspector-velden, tags en triggers. Wijs op kleine commits en een Pull Request als iets werkt. Teamgenoot reviewt. Niet meer sturen dan nodig.",
+    "deepdive": {
+      "analogy": "Je hebt gereedschap gekregen. Nu bouw je jouw eigen werkplaats.",
+      "whatIsWhat": "<strong>Pull Request:</strong> verzoek om je branch in main te zetten, met review.<br><strong>Commit:</strong> een opgeslagen stap in je werk.",
+      "trap": "Lang werken zonder testen of committen. Dan weet je niet meer wat het kapot maakte.",
+      "rule": "Klein bouwen, testen, committen."
+    }
+  }
+];
+
+        SlideDeck.init({
+            theme: 'glr',
+            trackTitle: "MBO Traject Immersive Design • Virtual Reality & XR",
+            lessonNumber: 2,
+            lessonTitle: "Eerste Code en GitHub",
+            prevLessonUrl: "presentation_les1.html",
+            nextLessonUrl: "presentation_les3.html",
+            overviewUrl: 'index.html',
+            slides: slides
+        });
+    </script>
+</body>
+</html>

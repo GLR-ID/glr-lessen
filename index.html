@@ -238,6 +238,68 @@
         .track-card.locked { opacity: 0.5; filter: grayscale(0.8); cursor: not-allowed; }
         .track-card.locked:hover { transform: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); background: var(--card-bg); }
 
+        .lesson-list li {
+            justify-content: space-between;
+        }
+
+        .badge-status {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .badge-status.open {
+            background: rgba(168, 224, 0, 0.18);
+            color: #a8e000;
+            border: 1px solid rgba(168, 224, 0, 0.4);
+            transition: all 0.15s ease;
+        }
+
+        .badge-status.open:hover {
+            background: #a8e000;
+            color: #000000;
+            box-shadow: 0 0 10px rgba(168, 224, 0, 0.4);
+        }
+
+        .badge-status.soon {
+            background: rgba(148, 163, 184, 0.1);
+            color: #64748b;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .track-actions-dual {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-hero-action {
+            display: block;
+            text-align: center;
+            background: var(--glr-yellow);
+            color: #000000;
+            font-weight: 900;
+            font-size: 0.9rem;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
+        }
+
+        .btn-hero-action:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(250, 204, 21, 0.35);
+        }
+
         footer {
             margin-top: 24px;
             border-top: 1px solid var(--card-border);
@@ -289,7 +351,7 @@
             </div>
 
             <!-- Traject Immersive Design -->
-            <a class="track-card purple" href="immersive-design/index.html">
+            <div class="track-card purple">
                 <div>
                     <div class="track-header">
                         <span class="track-code">Traject Immersive Design</span>
@@ -298,15 +360,33 @@
                     <h3 class="track-title">Virtual Reality (VR &amp; XR Interaction)</h3>
                     <p class="track-desc">Voor studenten met basis programmeerervaring. Bouw een interactieve VR-ervaring met OpenXR en de XR Interaction Toolkit: 6 DoF tracking, locomotie, fysiek vastpakken en haptics.</p>
                     <ul class="lesson-list">
-                        <li><strong>Les 1:</strong> VR Wereldbouw &amp; de XR Origin (0 code)</li>
-                        <li><strong>Les 2:</strong> VR Input, Locomotion &amp; Comfort Modes</li>
-                        <li><strong>Les 3:</strong> Directe VR Interactie, Sockets &amp; Haptics</li>
-                        <li><strong>Les 4:</strong> Ruimtelijke VR UI &amp; Spatial Audio</li>
-                        <li><strong>Les 5:</strong> VR Performance &amp; OpenXR Standalone Build</li>
+                        <li>
+                            <span><strong>Les 1:</strong> VR Wereldbouw &amp; XR Origin (0 code)</span>
+                            <a class="badge-status open" href="immersive-design/presentation_les1.html">Open Slides &rarr;</a>
+                        </li>
+                        <li>
+                            <span><strong>Les 2:</strong> Eerste Code en GitHub</span>
+                            <span class="badge-status soon">Binnenkort</span>
+                        </li>
+                        <li>
+                            <span><strong>Les 3:</strong> Directe VR Interactie, Sockets &amp; Haptics</span>
+                            <span class="badge-status soon">Binnenkort</span>
+                        </li>
+                        <li>
+                            <span><strong>Les 4:</strong> Ruimtelijke VR UI &amp; Spatial Audio</span>
+                            <span class="badge-status soon">Binnenkort</span>
+                        </li>
+                        <li>
+                            <span><strong>Les 5:</strong> VR Performance &amp; OpenXR Standalone Build</span>
+                            <span class="badge-status soon">Binnenkort</span>
+                        </li>
                     </ul>
                 </div>
-                <div class="track-cta">Open Immersive Design Landingspagina &rarr;</div>
-            </a>
+                <div class="track-actions-dual">
+                    <a class="btn-hero-action" href="immersive-design/presentation_les1.html">Start Direct: Les 1 Presentatie &rarr;</a>
+                    <a class="track-cta" href="immersive-design/index.html">Overzicht Traject &amp; Lessen &rarr;</a>
+                </div>
+            </div>
         </div>
     </div>
 

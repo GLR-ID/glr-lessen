@@ -4,4 +4,4 @@ Lesmateriaal van het Grafisch Lyceum Rotterdam (MBO niveau 4, Game Development &
 
 Open de site via GitHub Pages: https://glr-id.github.io/glr-lessen/
 
-Op dit moment is alleen **Immersive Design, Les 1** beschikbaar. De overige lessen verschijnen later ("Binnenkort").
+Op dit moment zijn **Immersive Design, Les 1 tot en met 3** beschikbaar. De overige lessen verschijnen later ("Binnenkort").

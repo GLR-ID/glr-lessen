@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les 3: Directe VR Interactie, Sockets & Haptics • Grafisch Lyceum Rotterdam</title>
+    <link rel="stylesheet" href="../scripts/hr_slide_deck.css">
+</head>
+<body data-theme="glr">
+    <!-- Core SlideDeck Library -->
+    <script src="../scripts/hr_slide_deck.js"></script>
+    <script>
+        const slides = [
+  {
+    "isHero": true,
+    "title": "Directe VR Interactie & Haptics",
+    "subtitle": "Les 3: Verplaatsen, dingen vastpakken, werpen, sockets en controller-trillingen",
+    "topics": [
+      "1. <strong>Locomotion:</strong> Teleporteren en Snap Turn naar je werkbank",
+      "2. <strong>Direct vs Ray Interactor:</strong> Dichtbij met je hand pakken of richten op afstand",
+      "3. <strong>XR Grab Interactable:</strong> Objecten oppakbaar maken met Rigidbody en Collider",
+      "4. <strong>Movement Types & Werpen:</strong> Velocity Tracking en Throw Smoothing instellen",
+      "5. <strong>Attach Transforms:</strong> Gereedschap netjes bij het handvat vastpakken",
+      "6. <strong>Tweehandig Oppakken:</strong> Grote voorwerpen met twee handen richten",
+      "7. <strong>XR Socket Interactor:</strong> Sleutelgaten, magnetische houders en filters",
+      "8. <strong>Haptic Feedback:</strong> Trilsignalen sturen naar de controllers via inspector en C#"
+    ],
+    "notes": "In deze les maken we de wereld interactief. We beginnen met een korte verplaatsing naar de werkbank. Daarna leren studenten hoe ze voorwerpen oppakken, weggooien, in een houder klikken en trillingen voelen."
+  },
+  {
+    "category": "Start",
+    "title": "Wat Maken We Vandaag?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Vier Resultaten</div><div class=\"info-card-text\">Aan het eind van deze les werkt dit in jouw project:<ul><li>Teleporteren en 45 graden draaien in je scene</li><li>Voorwerpen oppakken en fysiek werpen</li><li>Objecten magnetisch in een houder klikken</li><li>Trillingen voelen bij elke interactie</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Zo Bouwen We Het Op</div><div class=\"info-card-text\"><ul><li><strong>1. Locomotion:</strong> Vloer en controllers inrichten</li><li><strong>2. Oppakken:</strong> Fysica, grijpen en gooien</li><li><strong>3. Sockets & Trillen:</strong> Houders en haptics</li><li><strong>4. Eigen Game:</strong> Toepassen in je teamproject</li></ul></div></div></div>",
+    "notes": "Bespreek de vier resultaten kort. Vraag of iedereen het project uit Les 1 en 2 open heeft staan. Wie geen VR-bril heeft gebruikt de XR Device Simulator.",
+    "deepdive": {
+      "analogy": "Net als in een echte werkplaats: eerst loop je naar de werkbank, dan pak je het gereedschap vast, en hang je het na gebruik terug aan het magnetische bord.",
+      "whatIsWhat": "<strong>XR Direct Interactor:</strong> het onderdeel op je virtuele hand dat voorwerpen dichtbij grijpt.<br><strong>XR Grab Interactable:</strong> het onderdeel op een object dat het oppakbaar maakt.<br><strong>Socket:</strong> een magnetisch slot waarin een voorwerp vastklikt.",
+      "trap": "Meteen een heel ingewikkelde puzzel willen bouwen voordat een simpele kubus stabiel kan worden opgepakt.",
+      "rule": "Test na elke stap meteen in de simulator of in je VR-bril."
+    }
+  },
+  {
+    "category": "Project Check",
+    "title": "Project Check & Werkbank",
+    "images": [
+      {
+        "file": "03-werkbank-setup.png",
+        "want": "Unity Scene view: werkbank of tafel met een Box Collider en XR Origin ervoor"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Controleer Je Scene</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Open <strong>GLR_VR_Laboratorium</strong> in Unity 6</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Selecteer je <strong>Tafel</strong> of <strong>Werkbank</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Controleer: <strong>Box Collider</strong> aanwezig, <em>Is Trigger</em> staat <strong>UIT</strong></div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>INSPECTOR CHECK</span></div><pre>GameObject: Werkbank_Tafel\n├── Transform (Scale: 2.0, 0.9, 1.0)\n├── Mesh Renderer\n└── Box Collider\n    ├── Is Trigger: [ ] (UIT!)\n    └── Size: (2.0, 0.9, 1.0)</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/03-werkbank-setup.png\"><img src=\"img/les3/03-werkbank-setup.png\" alt=\"Unity Scene view: werkbank of tafel met een Box Collider en XR Origin ervoor\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Scene view: werkbank of tafel met een Box Collider en XR Origin ervoor</div><code class=\"media-ph-file\">img/les3/03-werkbank-setup.png</code></figure></div>",
+    "notes": "Controleer bij studenten dat de tafel stevig op de vloer staat en een Box Collider heeft zonder vinkje bij Is Trigger.",
+    "deepdive": {
+      "analogy": "Als een tafelblad van papier is zonder planken eronder, valt je koffiemok er direct doorheen.",
+      "whatIsWhat": "<strong>Box Collider:</strong> een onzichtbare doos die voorkomt dat objecten door elkaar heen bewegen.<br><strong>Is Trigger:</strong> zorgt dat objecten er dwars doorheen kunnen bewegen voor detectie.",
+      "trap": "Is Trigger per ongeluk aanvinken op het tafelblad.",
+      "rule": "Vloeren en werkbanken hebben altijd een niet-trigger collider."
+    }
+  },
+  {
+    "category": "Locomotion",
+    "title": "VR Locomotion: Verplaatsen in VR",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Twee Manieren van Bewegen</div><div class=\"info-card-text\"><ul><li><strong>Continuous Move:</strong> Glijdend lopen met de joystick. Kan misselijkheid veroorzaken.</li><li><strong>Teleportation:</strong> Richten met een boog en direct flitsen. Comfortabel voor iedereen.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Waarom Motion Sickness?</div><div class=\"info-card-text\"><ul><li>Je ogen zien dat je door de kamer glijdt</li><li>Je evenwichtsorgaan voelt geen echte versnelling</li><li>Dit conflict in je hersenen maakt je duizelig</li><li><strong>Oplossing:</strong> Teleportatie flitst zonder tussenstap!</li></ul></div></div></div>",
+    "notes": "Leg het verschil uit tussen glijdend lopen en teleporteren. Voor een laboratorium- of escaperoom-ervaring is teleportatie de veiligste keuze.",
+    "deepdive": {
+      "analogy": "Het is alsof je in een stilstaande trein zit en de trein naast je vertrekt: je hersenen denken even dat jij beweegt.",
+      "whatIsWhat": "<strong>Motion Sickness:</strong> misselijkheid door verschil tussen wat je ogen zien en je lijf voelt.<br><strong>Teleportation:</strong> direct naar een gekozen punt springen zonder tussenstappen.",
+      "trap": "Alleen Continuous Move bouwen zonder comfort-opties voor spelers die snel misselijk worden.",
+      "rule": "Bied altijd een comfortabele manier van verplaatsen aan."
+    }
+  },
+  {
+    "category": "Locomotion",
+    "title": "Stap 1: Teleportation Setup",
+    "images": [
+      {
+        "file": "05-teleportation-area.png",
+        "want": "Inspector van de vloer: Teleportation Area component toegevoegd en actief"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Vloer Instellen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer in de Hierarchy de <strong>Vloer</strong> (Floor)</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>Add Component</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zoek <strong>Teleportation Area</strong> en voeg toe</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Check: vloer heeft een <strong>Box Collider</strong></div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>INSPECTOR VLOER</span></div><pre>GameObject: Vloer_Laboratorium\n├── Box Collider (Is Trigger: OFF)\n└── Teleportation Area\n    ├── Interaction Layers: Default\n    └── Match Orientation: Target Up</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/05-teleportation-area.png\"><img src=\"img/les3/05-teleportation-area.png\" alt=\"Inspector van de vloer: Teleportation Area component toegevoegd en actief\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector van de vloer: Teleportation Area component toegevoegd en actief</div><code class=\"media-ph-file\">img/les3/05-teleportation-area.png</code></figure></div>",
+    "notes": "Laat zien dat Teleportation Area direct werkt op elk object met een collider. Wijs studenten erop dat muren GEEN Teleportation Area mogen krijgen.",
+    "deepdive": {
+      "analogy": "De Teleportation Area is als een groen geschilderd trottoir: hier mag de speler overal landen.",
+      "whatIsWhat": "<strong>Teleportation Area:</strong> component waarmee een heel oppervlak bruikbaar wordt als landingsplek.<br><strong>Teleportation Anchor:</strong> component voor een vaste stip waar de speler precies op landt (bijvoorbeeld voor een puzzel).",
+      "trap": "De component toevoegen aan een GameObject zonder collider; de laser kan dan nergens op mikken.",
+      "rule": "Teleportation werkt alleen op oppervlakken met een actieve collider."
+    }
+  },
+  {
+    "category": "Locomotion",
+    "title": "Stap 2: Snap Turn (Draaien met Stapjes)",
+    "images": [
+      {
+        "file": "06-snap-turn-provider.png",
+        "want": "Inspector XR Origin: Snap Turn Provider met Turn Amount op 45 graden"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">XR Origin Configureren</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer <strong>XR Origin (XR Rig)</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>Add Component</strong>: zoek <strong>Snap Turn Provider</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet <strong>Turn Amount</strong> op <strong>45</strong> graden</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Zet <strong>Debounce Time</strong> op <strong>0.2</strong> seconden</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>INSPECTOR SNAP TURN</span></div><pre>XR Origin (XR Rig)\n└── Snap Turn Provider\n    ├── Turn Amount: 45°\n    ├── Debounce Time: 0.2s\n    └── Enable Turn Left/Right: ON</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/06-snap-turn-provider.png\"><img src=\"img/les3/06-snap-turn-provider.png\" alt=\"Inspector XR Origin: Snap Turn Provider met Turn Amount op 45 graden\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector XR Origin: Snap Turn Provider met Turn Amount op 45 graden</div><code class=\"media-ph-file\">img/les3/06-snap-turn-provider.png</code></figure></div>",
+    "notes": "Demonstreer Snap Turn. Leg uit dat 45 graden de standaardhoek is in VR-producties.",
+    "deepdive": {
+      "analogy": "Snap Turn is als het omslaan van een bladzijde: in één fractie van een seconde zie je het volgende beeld, zonder tussendoor te tollen.",
+      "whatIsWhat": "<strong>Snap Turn:</strong> in vaste stappen draaien (bijvoorbeeld 45 graden per klik).<br><strong>Debounce Time:</strong> korte pauze zodat één duw tegen de joystick niet drie keer achter elkaar doordraait.",
+      "trap": "Turn Amount op 90 graden zetten waardoor de speler snel de oriëntatie in de ruimte verliest.",
+      "rule": "Gebruik 45 graden voor een natuurlijke oriëntatie in VR."
+    }
+  },
+  {
+    "category": "Locomotion Test",
+    "title": "Testen: Verplaatsen naar de Werkbank",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Drie Teststappen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Druk op <strong>Play</strong> in Unity</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Richt op de vloer voor de werkbank en flits</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Tik de rechter joystick opzij om 45 graden te draaien</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Sneltoetsen Simulator</div><div class=\"info-card-text\"><ul><li><strong>Spatiebalk:</strong> Schakelt tussen linker- en rechtercontroller</li><li><strong>Rechtermuisknop ingedrukt:</strong> Rondkijken met je hoofd</li><li><strong>Muiswiel:</strong> Controller naar voren/achteren duwen</li></ul></div></div></div>",
+    "notes": "Geef studenten twee minuten de tijd om te testen. Loop rond om te helpen met de simulatorbesturing als studenten vastzitten.",
+    "deepdive": {
+      "analogy": "Voordat je een auto start, zet je eerst je stoel en spiegels goed. In VR controleer je eerst of je soepel bij je werkplek kunt komen.",
+      "whatIsWhat": "<strong>XR Device Simulator:</strong> het virtuele testpaneel in Unity waarmee je een VR-bril en controllers met muis en toetsenbord nabootst.",
+      "trap": "Vergeten op Play te drukken of niet naar de Game-view kijken tijdens het testen.",
+      "rule": "Test eerst je verplaatsing voordat je start met interacties."
+    }
+  },
+  {
+    "category": "Interactors",
+    "title": "Direct Interactor vs Ray Interactor",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Direct Interactor (Dichtbij)</div><div class=\"info-card-text\"><ul><li>Binnen handbereik (0 tot 0.8 meter)</li><li>Vereist een <strong>Trigger Collider</strong> op de hand</li><li>Grijpt zodra je hand het object fysiek raakt</li><li>Meest natuurlijke gevoel</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Ray Interactor (Afstand)</div><div class=\"info-card-text\"><ul><li>Buiten handbereik (&gt; 1 meter)</li><li>Schiet een laserstraal uit de controller</li><li>Trekt verre objecten naar je toe (Force Grab)</li><li>Ideaal voor zwevende 3D menu's</li></ul></div></div></div>",
+    "notes": "Leg uit dat we vandaag primair met de Direct Interactor werken. Een echte werkbank bedien je met je eigen handen, niet met een afstandsbediening.",
+    "deepdive": {
+      "analogy": "Direct Interactor is je eigen hand waarmee je een pen pakt. Ray Interactor is een telescopische grijper waarmee je rommel van het gras opraapt.",
+      "whatIsWhat": "<strong>XR Direct Interactor:</strong> detecteert objecten die je hand fysiek aanraakt.<br><strong>XR Ray Interactor:</strong> projecteert een straal voor interacties op afstand.",
+      "trap": "De laserstraal van de Ray Interactor dwars door je hand laten schijnen terwijl je iets van dichtbij pakt.",
+      "rule": "Gebruik Direct Interactor voor gereedschap en Ray Interactor voor menu's."
+    }
+  },
+  {
+    "category": "Interactors",
+    "title": "Stap 3: Direct Interactors Inrichten",
+    "images": [
+      {
+        "file": "09-direct-interactor-hand.png",
+        "want": "Hierarchy en Inspector: Right Controller met XR Direct Interactor en Sphere Collider (Is Trigger AAN, Radius 0.1)"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Handen Inrichten</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Hierarchy: open <strong>XR Origin &gt; Camera Offset</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Selecteer <strong>Left Controller</strong> en <strong>Right Controller</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Voeg toe: <strong>XR Direct Interactor</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Voeg toe: <strong>Sphere Collider</strong> (Is Trigger: AAN, Radius: 0.1)</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>CONTROLLER CHECKLIST</span></div><pre>GameObject: Right Controller\n├── XR Direct Interactor\n│   └── Interaction Layers: Interactable\n└── Sphere Collider\n    ├── Is Trigger: [x] (AAN!)\n    └── Radius: 0.1m (10cm vuist)</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/09-direct-interactor-hand.png\"><img src=\"img/les3/09-direct-interactor-hand.png\" alt=\"Hierarchy en Inspector: Right Controller met XR Direct Interactor en Sphere Collider (Is Trigger AAN, Radius 0.1)\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Hierarchy en Inspector: Right Controller met XR Direct Interactor en Sphere Collider (Is Trigger AAN, Radius 0.1)</div><code class=\"media-ph-file\">img/les3/09-direct-interactor-hand.png</code></figure></div>",
+    "notes": "Benadruk dat Is Trigger op de hand AAN moet staan. Als Is Trigger uit staat, stoot de controller de objecten weg voordat je ze kunt pakken.",
+    "deepdive": {
+      "analogy": "De trigger collider op je hand is als een onzichtbare handschoen met tastzenuwen: zodra iets de handschoen raakt, weet Unity dat je kunt grijpen.",
+      "whatIsWhat": "<strong>Trigger Collider:</strong> een botsingsvorm die geen fysieke weerstand biedt, maar wel meet wanneer iets naar binnen beweegt.<br><strong>Radius 0.1:</strong> bolvorm met een doorsnede van 20 cm.",
+      "trap": "Is Trigger vergeten aan te vinken; je hand stoot dan als een baksteen tegen voorwerpen aan.",
+      "rule": "Direct Interactors hebben altijd een Trigger Collider nodig."
+    }
+  },
+  {
+    "category": "Layers",
+    "title": "Stap 4: Interaction Layer Masks",
+    "images": [
+      {
+        "file": "10-interaction-layers.png",
+        "want": "Project Settings > Tags and Layers: nieuwe layer Interactable aangemaakt en gekoppeld aan de Direct Interactor"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Filterlaag Maken</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Menu: <strong>Edit &gt; Project Settings</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Kies links: <strong>XR Interaction Toolkit</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Voeg nieuwe Interaction Layer toe: <strong>Interactable</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Zet op je controllers <strong>Interaction Layers</strong> op <strong>Interactable</strong></div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Waarom Een Filter?</div><div class=\"info-card-text\"><ul><li>Zonder filter grijpt je hand per ongeluk muren of vloeren</li><li>Met de laag <code>Interactable</code> pakt je hand uitsluitend losse voorwerpen</li><li>Voorkomt vreemde physics glitches</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/10-interaction-layers.png\"><img src=\"img/les3/10-interaction-layers.png\" alt=\"Project Settings > Tags and Layers: nieuwe layer Interactable aangemaakt en gekoppeld aan de Direct Interactor\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Project Settings > Tags and Layers: nieuwe layer Interactable aangemaakt en gekoppeld aan de Direct Interactor</div><code class=\"media-ph-file\">img/les3/10-interaction-layers.png</code></figure></div>",
+    "notes": "Leg uit dat Interaction Layers specifiek zijn voor de XR Toolkit en losstaan van de gewone Unity physics layers.",
+    "deepdive": {
+      "analogy": "Het is als een magneet die alleen ijzer aantrekt en plastic negeert: je hand reageert alleen op de juiste spullen.",
+      "whatIsWhat": "<strong>Interaction Layer:</strong> een specifieke filterlaag binnen de XR Interaction Toolkit.<br><strong>Layer Mask:</strong> een selectievakje waarmee je bepaalt welke lagen mogen communiceren.",
+      "trap": "De gewone Unity Physics Layer verwarren met de XR Interaction Layer.",
+      "rule": "Gebruik altijd een aparte Interaction Layer voor grijpbare objecten."
+    }
+  },
+  {
+    "category": "Interactable",
+    "title": "Voorwerpen Oppakbaar Maken",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>INSPECTOR CHECKLIST</span></div><pre>GameObject: Zaklamp\n├── Rigidbody (Mass: 0.5, Continuous Dynamic)\n├── Box Collider (Is Trigger: OFF)\n└── XR Grab Interactable\n    ├── Movement Type: Velocity Tracking\n    ├── Smooth Position: ON\n    └── Interaction Layers: Interactable</pre></div></div><div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">De 3 Verplichte Onderdelen</div><div class=\"info-card-text\"><ul><li><strong>1. Collider:</strong> Geeft het voorwerp een vaste vorm</li><li><strong>2. Rigidbody:</strong> Geeft massa en zwaartekracht</li><li><strong>3. XR Grab Interactable:</strong> Zorgt dat de VR-hand het herkent</li></ul></div></div></div>",
+    "notes": "Vraag de studenten welk onderdeel ontbreekt als een voorwerp door de vloer valt (geen collider of verkeerde trigger), en welk als het niet valt (geen Rigidbody).",
+    "deepdive": {
+      "analogy": "Een doos in de echte wereld heeft karton (collider), gewicht (rigidbody) en handvatten (grab interactable). Zonder handvat kun je hem niet optillen.",
+      "whatIsWhat": "<strong>Rigidbody:</strong> de natuurkundige rekenmotor van Unity die massa en zwaartekracht berekent.<br><strong>XR Grab Interactable:</strong> het script dat de koppeling maakt met de VR hand.",
+      "trap": "De Rigidbody vergeten; het object blijft dan roerloos in de lucht hangen.",
+      "rule": "Geen Rigidbody betekent geen zwaartekracht en geen realistische physics."
+    }
+  },
+  {
+    "category": "Interactable",
+    "title": "Stap 5: 3D Object & Rigidbody Setup",
+    "images": [
+      {
+        "file": "12-rigidbody-continuous.png",
+        "want": "Inspector 3D object: Rigidbody met Mass 0.5, Use Gravity AAN en Collision Detection op Continuous Dynamic"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Object Bouwen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Hierarchy: <strong>3D Object &gt; Cube</strong> (schaal: 0.15, 0.15, 0.15)</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Plaats het blokje bovenop de werkbank</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Klik <strong>Add Component &gt; Rigidbody</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Zet <strong>Collision Detection</strong> op <strong>Continuous Dynamic</strong></div></div></div></div><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Voorkom Tunneling</div><div class=\"info-card-text\">In VR bewegen je handen razendsnel. Met standaard <em>Discrete</em> botsing schiet een snel object dwars door de tafel. <strong>Continuous Dynamic</strong> controleert continu en stopt elke doorgang.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/12-rigidbody-continuous.png\"><img src=\"img/les3/12-rigidbody-continuous.png\" alt=\"Inspector 3D object: Rigidbody met Mass 0.5, Use Gravity AAN en Collision Detection op Continuous Dynamic\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector 3D object: Rigidbody met Mass 0.5, Use Gravity AAN en Collision Detection op Continuous Dynamic</div><code class=\"media-ph-file\">img/les3/12-rigidbody-continuous.png</code></figure></div>",
+    "notes": "Leg het gevaar van tunneling uit: als een hand met 5 meter per seconde beweegt, slaat een object in één frame door de tafel heen zonder dat Discrete collision het meet.",
+    "deepdive": {
+      "analogy": "Discrete is alsof je elke seconde even je ogen opendoet: een snelle kogel zie je niet voorbijkomen. Continuous is alsof je continu een camera filmt.",
+      "whatIsWhat": "<strong>Tunneling:</strong> een physics bug waarbij snelle objecten door muren heen vliegen.<br><strong>Continuous Dynamic:</strong> continue botsingscontrole speciaal voor bewegende interactieve objecten.",
+      "trap": "Collision Detection op Discrete laten staan bij kleine voorwerpen.",
+      "rule": "Gebruik altijd Continuous Dynamic voor objecten die de speler kan oppakken."
+    }
+  },
+  {
+    "category": "Interactable",
+    "title": "Stap 6: XR Grab Interactable Toevoegen",
+    "images": [
+      {
+        "file": "13-xr-grab-interactable.png",
+        "want": "Inspector 3D object: XR Grab Interactable component toegevoegd met Interaction Layer Interactable"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Grijpen Activeren</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer je testobject</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klik <strong>Add Component &gt; XR Grab Interactable</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Stel <strong>Interaction Layers</strong> in op <strong>Interactable</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Druk op <strong>Play</strong> en pak het object met de <strong>Grip-knop</strong> (G)</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>XR GRAB SETTINGS</span></div><pre>XR Grab Interactable\n├── Interaction Layers: Interactable\n├── Movement Type: Velocity Tracking\n├── Select Mode: Single\n└── Retain Transform Parent: OFF</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/13-xr-grab-interactable.png\"><img src=\"img/les3/13-xr-grab-interactable.png\" alt=\"Inspector 3D object: XR Grab Interactable component toegevoegd met Interaction Layer Interactable\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector 3D object: XR Grab Interactable component toegevoegd met Interaction Layer Interactable</div><code class=\"media-ph-file\">img/les3/13-xr-grab-interactable.png</code></figure></div>",
+    "notes": "Laat alle studenten controleren of ze het blokje kunnen optillen en weer neerleggen. Help eventueel met de gripknop in de simulator.",
+    "deepdive": {
+      "analogy": "Het toevoegen van XR Grab Interactable is als het bevestigen van klittenband aan een voorwerp: je controller plakt er direct aan vast.",
+      "whatIsWhat": "<strong>XR Grab Interactable:</strong> het Unity script dat grijp-events van de controller afhandelt.<br><strong>Grip Button:</strong> de knop aan de zijkant van de controller die je met je middelvinger indrukt.",
+      "trap": "De Trigger-knop (wijsvinger) indrukken in plaats van de Grip-knop.",
+      "rule": "Grijpen doe je met de Grip-knop, wijzen of schieten met de Trigger."
+    }
+  },
+  {
+    "category": "Physics",
+    "title": "Movement Types: Hoe Volgt het Object?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Vergelijk de 3 Standen</div><div class=\"info-card-text\"><ul><li><strong>Velocity Tracking:</strong> Gebruikt physics krachten. Botst netjes tegen muren en tafels. (Aanbevolen!)</li><li><strong>Instantaneous:</strong> Plakt direct op hand. Snijdt dwars door muren heen.</li><li><strong>Kinematic:</strong> Volgt hand strak. Voor draaiknoppen en hendels.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Wanneer Gebruik Je Wat?</div><div class=\"info-card-text\"><ul><li><strong>Hamer, fles of gereedschap:</strong> <em>Velocity Tracking</em></li><li><strong>Briefje of speelkaart:</strong> <em>Instantaneous</em></li><li><strong>Schuiflade of hendel:</strong> <em>Kinematic</em></li></ul></div></div></div>",
+    "notes": "Demonstreer het verschil door een kubus tegen een muur te duwen: bij Instantaneous verdwijnt hij in de muur, bij Velocity Tracking stopt hij netjes.",
+    "deepdive": {
+      "analogy": "Instantaneous is als een muiscursor die direct overal heen springt. Velocity Tracking is als het vasthouden van een zware hamer: als je tegen een muur slaat, voel je weerstand.",
+      "whatIsWhat": "<strong>Velocity Tracking:</strong> berekent de snelheid van de hand en oefent met AddForce krachten uit op het object.<br><strong>Instantaneous:</strong> overschrijft direct de Transform positie per frame.",
+      "trap": "Een zware bijl of hamer op Instantaneous zetten waardoor de speler door muren en kasten heen kan slaan.",
+      "rule": "Gebruik altijd Velocity Tracking voor fysieke gereedschappen en wapens."
+    }
+  },
+  {
+    "category": "Werpfysica",
+    "title": "Stap 7: Werpfysica & Throw Smoothing",
+    "images": [
+      {
+        "file": "15-throw-smoothing.png",
+        "want": "Inspector XR Grab Interactable: Throw on Detach AAN, Throw Velocity Scale 1.2 en Smoothing Duration 0.1"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Gooien Finetunen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer je interactieve object</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Klap open: <strong>Throw on Detach</strong> (zet AAN)</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet <strong>Throw Velocity Scale</strong> op <strong>1.2</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Zet <strong>Throw Smoothing Duration</strong> op <strong>0.1s</strong></div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>THROW SETTINGS</span></div><pre>Throw on Detach: [x] AAN\n├── Throw Velocity Scale: 1.2\n├── Throw Angular Velocity Scale: 1.0\n├── Throw Smoothing Duration: 0.1s\n└── Smooth Velocity: ON</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/15-throw-smoothing.png\"><img src=\"img/les3/15-throw-smoothing.png\" alt=\"Inspector XR Grab Interactable: Throw on Detach AAN, Throw Velocity Scale 1.2 en Smoothing Duration 0.1\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector XR Grab Interactable: Throw on Detach AAN, Throw Velocity Scale 1.2 en Smoothing Duration 0.1</div><code class=\"media-ph-file\">img/les3/15-throw-smoothing.png</code></figure></div>",
+    "notes": "Laat studenten een bal of kubus weggooien in de richting van een doelwit of muur. Laat ze zien hoe de Throw Velocity Scale het gooien een stuk lichter maakt.",
+    "deepdive": {
+      "analogy": "Zoals een honkbalhandschoen die de bal netjes lanceert in plaats van dat hij meteen uit je vingers glipt.",
+      "whatIsWhat": "<strong>Throw on Detach:</strong> zorgt dat het object de snelheid van je zwaaiende arm meeneemt bij loslaten.<br><strong>Velocity Scale 1.2:</strong> geeft 20 procent extra snelheid mee om het gemis aan fysieke vingerspanning te compenseren.",
+      "trap": "Throw on Detach uitzetten; voorwerpen vallen dan als een baksteen dood neer zodra je loslaat.",
+      "rule": "Throw Smoothing voorkomt frustrerende gooi-ervaringen in VR."
+    }
+  },
+  {
+    "category": "Attach Points",
+    "title": "Het Probleem met het Middelpunt",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Zonder Attach Point</div><div class=\"info-card-text\">Pak je een hamer of fles op, dan springt het <strong>middelpunt (pivot)</strong> direct in je vuist:<ul><li>Handvat steekt aan de achterkant uit</li><li>Vingers grijpen in het midden van het metaal</li><li>Richten voelt scheef en onhandig aan</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">De Oplossing: AttachPoint</div><div class=\"info-card-text\"><ul><li>We maken een leeg child GameObject op het handvat</li><li>We koppelen dit aan <strong>Attach Transform</strong></li><li>Unity pakt het voorwerp nu exact bij dat punt vast!</li></ul></div></div></div>",
+    "notes": "Demonstreer wat er gebeurt als je een cilinder oppakt zonder attach transform: hij plakt midden in de handpalm.",
+    "deepdive": {
+      "analogy": "Het is alsof je een koffiemok bij de hete rand vastgrijpt in plaats van bij het oortje.",
+      "whatIsWhat": "<strong>Pivot:</strong> het nulpunt waaromheen een 3D model roteert.<br><strong>Attach Transform:</strong> een leeg GameObject dat het exacte vastgrijppunt voor de vingers definieert.",
+      "trap": "Het 3D model zelf proberen te verschuiven in plaats van een leeg attach point te gebruiken.",
+      "rule": "Elk niet-vierkant object heeft een eigen Attach Transform nodig."
+    }
+  },
+  {
+    "category": "Attach Points",
+    "title": "Stap 8: Attach Point Maken",
+    "images": [
+      {
+        "file": "17-attach-transform-handvat.png",
+        "want": "Hierarchy: leeg child GameObject AttachPoint onder het object, gesleept in het veld Attach Transform"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Handvat Inrichten</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Rechtsklik op je object: <strong>Create Empty</strong>, noem <strong>AttachPoint</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Verplaats naar het handvat (blauwe Z-as wijst naar voren)</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Selecteer hoofdobject: sleep <em>AttachPoint</em> in <strong>Attach Transform</strong></div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>HIERARCHY STRUCTUUR</span></div><pre>GameObject: Hamer_01\n├── Rigidbody (Mass: 0.6)\n├── Box Collider\n├── XR Grab Interactable\n│   └── Attach Transform -> AttachPoint\n└── [Child] AttachPoint\n    └── Positie: handvat (Z wijst vooruit)</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/17-attach-transform-handvat.png\"><img src=\"img/les3/17-attach-transform-handvat.png\" alt=\"Hierarchy: leeg child GameObject AttachPoint onder het object, gesleept in het veld Attach Transform\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Hierarchy: leeg child GameObject AttachPoint onder het object, gesleept in het veld Attach Transform</div><code class=\"media-ph-file\">img/les3/17-attach-transform-handvat.png</code></figure></div>",
+    "notes": "Laat studenten goed letten op de blauwe Z-as van het AttachPoint. Als het object achterstevoren in de hand zit, roteer je het AttachPoint 180 graden om de Y-as.",
+    "deepdive": {
+      "analogy": "Zoals het monteren van een ergonomisch handvat aan een stuk gereedschap.",
+      "whatIsWhat": "<strong>Child GameObject:</strong> een leeg object dat meebeweegt met zijn ouder.<br><strong>Z-as (Blauw):</strong> de voorwaartse richting in Unity.",
+      "trap": "Vergeten het AttachPoint in het Inspector-veld te slepen.",
+      "rule": "Controleer altijd of de blauwe as in de kijkrichting van de speler wijst."
+    }
+  },
+  {
+    "category": "Attach Points",
+    "title": "Tweehandig Oppakken (Secondary Attach)",
+    "images": [
+      {
+        "file": "18-two-handed-grab.png",
+        "want": "Inspector XR Grab Interactable: Select Mode op Multiple met twee Attach Transforms voor twee handen"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Twee Handen Instellen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer een groot object (bijv. geweer of kist)</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Zet <strong>Select Mode</strong> op <strong>Multiple</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Maak een tweede attach point aan voor de tweede hand</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Waarom Met Twee Handen?</div><div class=\"info-card-text\"><ul><li>Eerste hand bepaalt de positie</li><li>Tweede hand richt de voorkant</li><li>Dempt trillingen voor stabiele controle</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/18-two-handed-grab.png\"><img src=\"img/les3/18-two-handed-grab.png\" alt=\"Inspector XR Grab Interactable: Select Mode op Multiple met twee Attach Transforms voor twee handen\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector XR Grab Interactable: Select Mode op Multiple met twee Attach Transforms voor twee handen</div><code class=\"media-ph-file\">img/les3/18-two-handed-grab.png</code></figure></div>",
+    "notes": "Leg uit dat Select Mode: Single standaard is (één hand tegelijk). Multiple maakt het mogelijk om met beide handen tegelijk vast te houden.",
+    "deepdive": {
+      "analogy": "Zoals het vasthouden van een bezemsteel of golfclub: met één hand wankelt het, met twee handen heb je volledige controle.",
+      "whatIsWhat": "<strong>Select Mode Multiple:</strong> staat meerdere controllers toe om tegelijkertijd hetzelfde object vast te houden.<br><strong>Secondary Grip:</strong> de hand die helpt bij het richten.",
+      "trap": "Select Mode op Single laten staan; als je linkerhand grijpt, laat je rechterhand direct los.",
+      "rule": "Grote objecten vereisen Select Mode: Multiple."
+    }
+  },
+  {
+    "category": "Sockets",
+    "title": "Wat Is een XR Socket Interactor?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Magnetische Houders</div><div class=\"info-card-text\">Een <strong>Socket</strong> houdt voorwerpen automatisch vast:<ul><li><strong>Sleutelgat:</strong> sleutel klikt vast en opent deur</li><li><strong>Holster:</strong> gereedschap aan je riem</li><li><strong>Sokkel:</strong> puzzelstuk klikt op zijn plek</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Hoe Werkt Het?</div><div class=\"info-card-text\"><ul><li>Object komt in bereik -&gt; <strong>ghost preview</strong> verschijnt</li><li>Speler laat los -&gt; object klikt magnetisch vast</li><li>Speler grijpt weer -&gt; object komt direct los</li></ul></div></div></div>",
+    "notes": "Bespreek toepassingen van sockets in verschillende gamegenres: inventaris, puzzels, wapenslots of machines.",
+    "deepdive": {
+      "analogy": "Een socket is als een magnetische messenstrip aan de keukenmuur: je houdt het mes in de buurt en het klikt vanzelf vast.",
+      "whatIsWhat": "<strong>XR Socket Interactor:</strong> een stationaire interactor die objecten vasthoudt in plaats van een bewegende controller.<br><strong>Hover Mesh:</strong> de transparante preview die toont waar het voorwerp landt.",
+      "trap": "Geen trigger collider toevoegen op de socket, waardoor hij niet voelt dat een object in de buurt komt.",
+      "rule": "Een socket heeft altijd een Trigger Collider nodig."
+    }
+  },
+  {
+    "category": "Sockets",
+    "title": "Stap 9: Socket Maken",
+    "images": [
+      {
+        "file": "20-socket-interactor-setup.png",
+        "want": "Inspector Socket GameObject: Sphere Collider (Trigger) en XR Socket Interactor met Show Mesh at Socket AAN"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Socket Configureren</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Hierarchy: <strong>Create Empty</strong>, noem <strong>Socket_Sleutelgat</strong></div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Voeg <strong>Sphere Collider</strong> toe (Trigger: AAN, Radius: 0.15)</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Voeg <strong>XR Socket Interactor</strong> toe</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Vink <strong>Show Mesh at Socket</strong> AAN</div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>INSPECTOR SOCKET</span></div><pre>GameObject: Socket_Sleutelgat\n├── Sphere Collider (Is Trigger: ON, Radius: 0.15m)\n└── XR Socket Interactor\n    ├── Interaction Layers: SleutelLaag\n    ├── Show Mesh at Socket: [x] AAN\n    └── Recycle Hover Mesh: ON</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/20-socket-interactor-setup.png\"><img src=\"img/les3/20-socket-interactor-setup.png\" alt=\"Inspector Socket GameObject: Sphere Collider (Trigger) en XR Socket Interactor met Show Mesh at Socket AAN\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector Socket GameObject: Sphere Collider (Trigger) en XR Socket Interactor met Show Mesh at Socket AAN</div><code class=\"media-ph-file\">img/les3/20-socket-interactor-setup.png</code></figure></div>",
+    "notes": "Laat studenten testen met het loslaten van het object boven de socket. Laat zien hoe het object netjes in de socket klikt.",
+    "deepdive": {
+      "analogy": "Zoals een laadstation voor een elektrische tandenborstel: je zet hem erin en hij staat meteen recht.",
+      "whatIsWhat": "<strong>Show Mesh at Socket:</strong> toont automatisch een transparante preview van het 3D model zodra je in het trigger-gebied bent.",
+      "trap": "De socket te dicht op de rand van de tafel zetten waardoor het vastgeklikte object door de tafel steekt.",
+      "rule": "Plaats de socket altijd een paar centimeter vrij van obstakels."
+    }
+  },
+  {
+    "category": "Sockets",
+    "title": "Stap 10: Sockets Filteren met Interaction Layers",
+    "images": [
+      {
+        "file": "21-socket-layer-filter.png",
+        "want": "Inspector Socket: Interaction Layers gefilterd zodat alleen de juiste sleutel of tool erin past"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Filter Instellen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Project Settings: maak laag <strong>SleutelLaag</strong> aan</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Zet op je sleutel-object de laag op <strong>SleutelLaag</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Zet op je socket bij Interaction Layers <strong>alleen SleutelLaag</strong> aan</div></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Waarom Is Dit Nodig?</div><div class=\"info-card-text\"><ul><li>Zonder filter klikt elk willekeurig voorwerp (een stoel of beker) in het sleutelgat</li><li>Met Interaction Layers accepteert de socket uitsluitend de juiste sleutel!</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/21-socket-layer-filter.png\"><img src=\"img/les3/21-socket-layer-filter.png\" alt=\"Inspector Socket: Interaction Layers gefilterd zodat alleen de juiste sleutel of tool erin past\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector Socket: Interaction Layers gefilterd zodat alleen de juiste sleutel of tool erin past</div><code class=\"media-ph-file\">img/les3/21-socket-layer-filter.png</code></figure></div>",
+    "notes": "Demonstreer wat er gebeurt zonder filter: elk object klikt in het slot. Met het filter wordt de verkeerde kubus geweigerd.",
+    "deepdive": {
+      "analogy": "Een brievenbus accepteert alleen brieven; een grote pakketdoos past er niet in.",
+      "whatIsWhat": "<strong>Interaction Layer Filter:</strong> zorgt dat sockets selectief objecten accepteren op basis van hun layer bitmask.",
+      "trap": "Zowel de hand als de socket dezelfde specifieke layer geven, waardoor de hand het voorwerp niet meer kan oppakken.",
+      "rule": "Zorg dat de Direct Interactor op de hand álle interactieve lagen kan oppakken."
+    }
+  },
+  {
+    "category": "Sockets Code",
+    "title": "Socket Events: Deur Openen met C#",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>DeurSlot.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n\n<span class=\"kw\">public</span> <span class=\"kw\">class</span> <span class=\"type\">DeurSlot</span> : <span class=\"type\">MonoBehaviour</span>\n{\n    <span class=\"kw\">public</span> <span class=\"type\">GameObject</span> deur;\n\n    <span class=\"kw\">public</span> <span class=\"kw\">void</span> <span class=\"type\">OpenDeur</span>()\n    {\n        deur.<span class=\"type\">SetActive</span>(<span class=\"kw\">false</span>);\n        <span class=\"type\">Debug</span>.<span class=\"type\">Log</span>(<span class=\"str\">\"Sleutel in slot: Deur geopend!\"</span>);\n    }\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Koppelen in de Inspector</div><div class=\"info-card-text\"><ul><li>Selecteer <strong>Socket_Sleutelgat</strong></li><li>Scroll naar <strong>Interactable Events &gt; Select Entered</strong></li><li>Klik op <code>+</code>, sleep het object met <code>DeurSlot</code> erin</li><li>Kies methode <code>DeurSlot.OpenDeur</code></li></ul></div></div></div>",
+    "notes": "Laat studenten zien hoe ze via het plusje bij Interactable Events direct een deur kunnen openen als de sleutel in de socket klikt.",
+    "deepdive": {
+      "analogy": "Een lichtschakelaar die vanzelf omgaat zodra de sleutel in het contactslot wordt gedraaid.",
+      "whatIsWhat": "<strong>Select Entered:</strong> het UnityEvent dat afvuurt wanneer een interactor een interactable vastgrijpt of opsluit.<br><strong>UnityEvent:</strong> een visuele koppeling in de Inspector om functies van andere objecten aan te roepen zonder C#.",
+      "trap": "Per ongeluk Hover Entered gebruiken in plaats van Select Entered, waardoor de actie al afgaat als je er alleen maar langs beweegt.",
+      "rule": "Gebruik Select Entered voor voltooide vergrendelingen."
+    }
+  },
+  {
+    "category": "Haptics",
+    "title": "Waarom Haptics Cruciaal Zijn in VR",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">De Ontbrekende Tastzin</div><div class=\"info-card-text\">In VR voel je alleen de plastic controller. Zonder trilling voelt een virtuele wereld leeg en afstandelijk:<ul><li>Een korte puls geeft directe tactiele bevestiging</li><li>Je hersenen geloven dat je het voorwerp echt beet hebt</li><li>Essentieel voor immersie en precisie</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Twee Trillingsprofielen</div><div class=\"info-card-text\"><ul><li><strong>Hover Haptic:</strong> Subtiele tik (duur 0.05s, kracht 0.2). Laat voelen dat je hand het object aanraakt.</li><li><strong>Select Haptic:</strong> Stevige klik (duur 0.12s, kracht 0.6). Bevestigt dat je het voorwerp vasthebt.</li></ul></div></div></div>",
+    "notes": "Leg uit dat VR draait om multisensorische feedback: beeld, geluid en haptics moeten op exact hetzelfde moment gebeuren.",
+    "deepdive": {
+      "analogy": "Net als het trillen van je smartphone-toetsenbord wanneer je een letter typt: zonder trilling voelt het typen onzeker en traag.",
+      "whatIsWhat": "<strong>Haptics:</strong> tactiele feedback opgewekt door vibratiemotoren (LRA of ERM) in de controllers.<br><strong>Amplitude:</strong> de sterkte van de trilling (tussen 0.0 en 1.0).<br><strong>Duration:</strong> de tijdsduur van de puls in seconden.",
+      "trap": "De trilling veel te lang aanzetten (bijvoorbeeld 2 seconden), waardoor de hele controller irritant gaat zoemen.",
+      "rule": "Houd haptische tikken altijd ultrakort: tussen 0.05 en 0.15 seconden."
+    }
+  },
+  {
+    "category": "Haptics",
+    "title": "Stap 11: Haptics Instellen in de Inspector",
+    "images": [
+      {
+        "file": "24-haptic-events-inspector.png",
+        "want": "Inspector XR Grab Interactable: Haptic Events opengeklapt met Duration 0.1 en Amplitude 0.5 bij Select Entered"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Direct Zonder Code</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Selecteer je interactieve object</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Scroll naar <strong>Haptic Events</strong></div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Klap <strong>Haptic Hover Entered</strong> open: duur <strong>0.05s</strong>, kracht <strong>0.2</strong></div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Klap <strong>Haptic Select Entered</strong> open: duur <strong>0.12s</strong>, kracht <strong>0.6</strong></div></div></div></div><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>HAPTIC EVENTS</span></div><pre>Haptic Events\n├── Haptic Hover Entered\n│   ├── Duration: 0.05s\n│   └── Amplitude: 0.2\n└── Haptic Select Entered\n    ├── Duration: 0.12s\n    └── Amplitude: 0.6</pre></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/24-haptic-events-inspector.png\"><img src=\"img/les3/24-haptic-events-inspector.png\" alt=\"Inspector XR Grab Interactable: Haptic Events opengeklapt met Duration 0.1 en Amplitude 0.5 bij Select Entered\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Inspector XR Grab Interactable: Haptic Events opengeklapt met Duration 0.1 en Amplitude 0.5 bij Select Entered</div><code class=\"media-ph-file\">img/les3/24-haptic-events-inspector.png</code></figure></div>",
+    "notes": "Wijs studenten erop dat de XR Device Simulator op pc geen fysieke trillingen kan doorgeven aan een muis. Haptics test je het beste in een echte VR-bril.",
+    "deepdive": {
+      "analogy": "Zoals het verschil tussen met je vingertop over een knop wrijven (hover) en de knop echt indrukken met een klik (select).",
+      "whatIsWhat": "<strong>Haptic Events:</strong> ingebouwde instellingen op de interactable om controllers te laten trillen zonder zelf code te hoeven schrijven.",
+      "trap": "Denken dat de haptics kapot zijn omdat de computermuis in de simulator niet trilt.",
+      "rule": "Test haptische feedback altijd op een echte VR controller."
+    }
+  },
+  {
+    "category": "Haptics Code",
+    "title": "Stap 12: Haptics via C# (Optioneel)",
+    "images": [
+      {
+        "file": "25-haptic-csharp-script.png",
+        "want": "Project map: VRHapticTrigger.cs script toegevoegd op een object en geopend in de Inspector"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>VRHapticTrigger.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n<span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>.<span class=\"type\">XR</span>.<span class=\"type\">Interaction</span>.<span class=\"type\">Toolkit</span>;\n<span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>.<span class=\"type\">XR</span>.<span class=\"type\">Interaction</span>.<span class=\"type\">Toolkit</span>.<span class=\"type\">Interactors</span>;\n\n<span class=\"kw\">public</span> <span class=\"kw\">class</span> <span class=\"type\">VRHapticTrigger</span> : <span class=\"type\">MonoBehaviour</span>\n{\n    [<span class=\"type\">SerializeField</span>] <span class=\"kw\">private</span> <span class=\"kw\">float</span> kracht = <span class=\"num\">0.6f</span>;\n    [<span class=\"type\">SerializeField</span>] <span class=\"kw\">private</span> <span class=\"kw\">float</span> duur = <span class=\"num\">0.12f</span>;\n\n    <span class=\"kw\">public</span> <span class=\"kw\">void</span> <span class=\"type\">GeefTrilling</span>(<span class=\"type\">SelectEnterEventArgs</span> args)\n    {\n        <span class=\"kw\">if</span> (args.interactorObject <span class=\"kw\">is</span> <span class=\"type\">XRBaseInputInteractor</span> controller)\n            controller.<span class=\"type\">SendHapticImpulse</span>(kracht, duur);\n    }\n}</pre></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><code>args.interactorObject</code>: de controller die het object beetpakt</li><li><code>is XRBaseInputInteractor</code>: checkt of de controller trilmotoren heeft</li><li><code>SendHapticImpulse(kracht, duur)</code>: stuurt de trillingspuls direct naar de hand</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les3/25-haptic-csharp-script.png\"><img src=\"img/les3/25-haptic-csharp-script.png\" alt=\"Project map: VRHapticTrigger.cs script toegevoegd op een object en geopend in de Inspector\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Project map: VRHapticTrigger.cs script toegevoegd op een object en geopend in de Inspector</div><code class=\"media-ph-file\">img/les3/25-haptic-csharp-script.png</code></figure></div>",
+    "notes": "Laat zien dat SendHapticImpulse eenvoudig is: twee getallen voor kracht (0 tot 1) en duur (in seconden).",
+    "deepdive": {
+      "analogy": "Net als het programmeren van een buzzer op een printplaat: geef het voltage en de tijd door en hij geeft een tik.",
+      "whatIsWhat": "<strong>SendHapticImpulse:</strong> de officiële Unity XR Interaction Toolkit methode om een controller te laten vibreren.<br><strong>XRBaseInputInteractor:</strong> de basisklasse voor controllers die fysieke invoer en motoren hebben.",
+      "trap": "SendHapticImpulse aanroepen op een socket interactor; een socket heeft immers geen vibratiemotor.",
+      "rule": "Stuur haptische impulsen altijd naar de interactor van de speler."
+    }
+  },
+  {
+    "category": "Troubleshooting",
+    "title": "Veelvoorkomende Fouten & Oplossingen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Object valt door de tafel</div><div class=\"info-card-text\"><ul><li>Staat <em>Is Trigger</em> per ongeluk AAN op tafel of object? Zet UIT!</li><li>Zet <em>Collision Detection</em> op <strong>Continuous Dynamic</strong></li></ul></div></div><div class=\"info-card amber\"><div class=\"info-card-title\">Object springt scheef in de hand</div><div class=\"info-card-text\"><ul><li>Ontbreekt de <strong>Attach Transform</strong>?</li><li>Controleer of de blauwe Z-as naar voren wijst</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Hand pakt niks beet</div><div class=\"info-card-text\"><ul><li>Heeft de hand een <strong>Trigger Collider</strong> (radius 0.1)?</li><li>Komen de <strong>Interaction Layers</strong> overeen?</li></ul></div></div><div class=\"info-card cyan\"><div class=\"info-card-title\">Geen trilling in simulator</div><div class=\"info-card-text\"><ul><li>De computermuis kan niet trillen. Test in een echte VR-headset!</li></ul></div></div></div>",
+    "notes": "Gebruik deze checklist wanneer studenten vastlopen tijdens het zelfstandig werken.",
+    "deepdive": {
+      "analogy": "Zoals een checklist voor de landing van een vliegtuig: controleer methodisch elk onderdeel in plaats van willekeurig knoppen in te drukken.",
+      "whatIsWhat": "<strong>Collision Matrix:</strong> het Unity instellingenscherm waarin je bepaalt welke lagen fysiek tegen elkaar kunnen botsen.",
+      "trap": "In paniek willekeurige instellingen aanpassen zonder de foutmelding in de Console te lezen.",
+      "rule": "Loop bij een fout altijd eerst de drie componenten na: Collider, Rigidbody en Grab Interactable."
+    }
+  },
+  {
+    "category": "Lab",
+    "title": "Zelfstandig Lab: Bouw Je Interactie-Set",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Jouw Bouwopdracht Vandaag</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Minimaal 2 verschillende objecten:</strong> Maak twee voorwerpen oppakbaar (sleutel, zaklamp, hamer) met passende colliders en massa</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Attach Transforms:</strong> Zorg dat beide objecten netjes bij het handvat in de hand vallen</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>1 Werkende Socket:</strong> Bouw een houder of sleutelgat met een filterlaag</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div><strong>Haptics & Commit:</strong> Stel voelbare trillingen in en commit via GitHub Desktop</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Voor Je Eigen Game</div><div class=\"info-card-text\">Gebruik voorwerpen die passen bij het concept van jouw team:<ul><li>Zaklantaarn voor een griezelkamer</li><li>Magische staf voor een fantasiegame</li><li>Gereedschap of sleutels voor een techniek-laboratorium</li></ul></div></div></div>",
+    "notes": "Laat studenten zelfstandig werken in hun teamprojecten. Help teams die hulp nodig hebben bij specifieke objectmodellen of filters.",
+    "deepdive": {
+      "analogy": "Nu je de losse gereedschappen beheerst, richt je je eigen werkplaats in voor het echte project.",
+      "whatIsWhat": "<strong>Zelfstandig Lab:</strong> praktische bouwtijd waarin studenten de geleerde technieken toepassen in hun eigen gameconcept.",
+      "trap": "Vergeten te committen aan het eind van de les via GitHub Desktop.",
+      "rule": "Prefab maken van je interactieve object en committen via GitHub Desktop."
+    }
+  },
+  {
+    "category": "Afronding",
+    "title": "Samenvatting & Volgende Les",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Wat Kun Je Nu?</div><div class=\"info-card-text\"><ul><li>Teleporteren en Snap Turn naar je werkplek</li><li>Voorwerpen oppakken met de Direct Interactor</li><li>Natuurlijk werpen met Throw Smoothing</li><li>Attach Transforms voor ergonomisch richten</li><li>Sockets filteren met Interaction Layers</li><li>Haptische tikken en pulsen sturen</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Volgende Les: Les 4</div><div class=\"info-card-text\">In <strong>Les 4</strong> gaan we de wereld voorzien van interfaces en echt 3D geluid:<ul><li><strong>World Space Canvas:</strong> 3D schermen en dashboards</li><li><strong>Polsmenu:</strong> Een menu op je onderarm dat opent met een handbeweging</li><li><strong>Spatial Audio:</strong> Geluid met echte richting en galm per kamer</li></ul></div></div></div>",
+    "notes": "Sluit de les af met een korte ronde langs de teams om te zien wat ze gebouwd hebben. Herinner iedereen eraan om te committen en pushen in GitHub Desktop.",
+    "deepdive": {
+      "analogy": "Les 3 gaf je virtuele handen en tastzin. Les 4 geeft je een dashboard en 3D oren om de ruimte volledig te beleven.",
+      "whatIsWhat": "<strong>Spatial Audio:</strong> 3D richtingsgeluid berekend op basis van de positie van je hoofd.<br><strong>World Space UI:</strong> knoppen en schermen die fysiek in de spelwereld staan.",
+      "trap": "Denken dat een VR game af is zonder geluid en interface.",
+      "rule": "Sla je werk altijd op en controleer je GitHub Desktop status voor je de deur uitloopt."
+    }
+  }
+];
+
+        SlideDeck.init({
+            theme: 'glr',
+            trackTitle: "MBO Traject Immersive Design • Virtual Reality & XR",
+            lessonNumber: 3,
+            lessonTitle: "Directe VR Interactie, Sockets & Haptics",
+            prevLessonUrl: "presentation_les2.html",
+            nextLessonUrl: null,
+            overviewUrl: 'index.html',
+            slides: slides
+        });
+    </script>
+</body>
+</html>

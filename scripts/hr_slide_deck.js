@@ -36,6 +36,7 @@
         slides: [],
         currentSlide: 0,
         viewMode: 'lab', // 'lab' or 'projector'
+        isLightMode: false,
         fontScale: 100,
         isNotesOpen: false,
         isHelpOpen: false,
@@ -231,6 +232,12 @@
                 </div>
 
                 <div class="top-right-actions">
+                    <button class="action-pill" id="btnThemeToggle" title="Wissel Licht / Donker modus [T]">
+                        Licht <kbd>[T]</kbd>
+                    </button>
+                    <button class="action-pill" id="btnEditToggle" title="Bewerken Modus [E]">
+                        Bewerken <kbd>[E]</kbd>
+                    </button>
                     <button class="action-pill" id="btnHelpToggle" title="Sneltoetsen [?]">
                         Help <kbd>[?]</kbd>
                     </button>
@@ -313,8 +320,12 @@
                             <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>Eerste / Laatste slide</td></tr>
                             <tr><td><kbd>L</kbd></td><td>Wissel naar Hoorcollege (Lecture) modus</td></tr>
                             <tr><td><kbd>P</kbd></td><td>Wissel naar Practicum (Lab) modus</td></tr>
+                            <tr><td><kbd>T</kbd></td><td>Wissel Licht / Donker modus</td></tr>
                             <tr><td><kbd>F</kbd></td><td>Volledig scherm in- / uitschakelen</td></tr>
                             <tr><td><kbd>N</kbd></td><td>Docent notities openen / sluiten</td></tr>
+                            <tr><td><kbd>E</kbd></td><td>Bewerken Modus in- / uitschakelen</td></tr>
+                            <tr><td><kbd>Cmd + Z</kbd> / <kbd>Ctrl + Z</kbd></td><td>Bewerking ongedaan maken (Undo)</td></tr>
+                            <tr><td><kbd>Cmd + Shift + Z</kbd> / <kbd>Cmd + Y</kbd></td><td>Bewerking opnieuw uitvoeren (Redo)</td></tr>
                             <tr><td><kbd>S</kbd> (in bewerkmodus)</td><td>Magnetisch uitlijnen aan / uit</td></tr>
                             <tr><td><kbd>?</kbd></td><td>Dit helpvenster tonen</td></tr>
                         </table>
@@ -530,27 +541,35 @@
                 pre.innerHTML = `<code>${highlighted}</code>`;
             }
 
-            // Ensure JetBrains Header tab is present
+            // Ensure single JetBrains Header tab is present (upgrade existing .code-header if found)
             if (!box.querySelector('.jb-header-tab')) {
-                const tab = document.createElement('div');
-                tab.className = 'jb-header-tab';
-                
-                // Try guessing filename
-                let filename = 'Script.cs';
-                const text = box.textContent || '';
-                const classMatch = text.match(/class\s+([A-Za-z0-9_]+)/);
-                if (classMatch) {
-                    filename = classMatch[1] + '.cs';
+                const existingHeader = box.querySelector('.code-header');
+                const headerSpan = existingHeader ? existingHeader.querySelector('span') : null;
+                let filename = headerSpan && headerSpan.textContent.trim() ? headerSpan.textContent.trim() : 'Script.cs';
+                if (!headerSpan) {
+                    const text = box.textContent || '';
+                    const classMatch = text.match(/class\s+([A-Za-z0-9_]+)/);
+                    if (classMatch) {
+                        filename = classMatch[1] + '.cs';
+                    }
                 }
 
+                const tab = document.createElement('div');
+                tab.className = 'jb-header-tab';
                 tab.innerHTML = `
                     <div style="display:flex; align-items:center; gap:6px;">
                         <span class="jb-csharp-icon">C#</span>
-                        <span class="jb-filename">${filename}</span>
+                        <span class="jb-filename"></span>
                     </div>
                     <button class="code-copy-btn" onclick="SlideDeck.copyCode(this)" title="Kopieer code">Kopieer</button>
                 `;
-                box.insertBefore(tab, box.firstChild);
+                tab.querySelector('.jb-filename').textContent = filename;
+
+                if (existingHeader) {
+                    existingHeader.replaceWith(tab);
+                } else {
+                    box.insertBefore(tab, box.firstChild);
+                }
             }
         });
 
@@ -635,6 +654,25 @@
             if (btnLec) btnLec.classList.remove('active');
             showToast('Practicum Modus [P] (Deepdives actief)');
         }
+    }
+
+    function applyLightMode(enabled, announce) {
+        state.isLightMode = !!enabled;
+        safeSet('glr_light_mode', state.isLightMode ? 'true' : 'false');
+        if (typeof document !== 'undefined') {
+            document.body.classList.toggle('light-mode', state.isLightMode);
+            const btnTheme = document.getElementById('btnThemeToggle');
+            if (btnTheme) {
+                btnTheme.innerHTML = state.isLightMode ? 'Donker <kbd>[T]</kbd>' : 'Licht <kbd>[T]</kbd>';
+            }
+        }
+        if (announce) {
+            showToast(state.isLightMode ? 'Lichte Modus [T] (Klaslokaal)' : 'Donkere Modus [T]');
+        }
+    }
+
+    function toggleLightMode() {
+        applyLightMode(!state.isLightMode, true);
     }
 
     function setFontScale(val) {
@@ -736,6 +774,9 @@
         if (btnLec) btnLec.addEventListener('click', () => setViewMode('projector'));
         if (btnLab) btnLab.addEventListener('click', () => setViewMode('lab'));
 
+        const btnTheme = document.getElementById('btnThemeToggle');
+        if (btnTheme) btnTheme.addEventListener('click', toggleLightMode);
+
         const btnFullscreen = document.getElementById('btnFullscreen');
         if (btnFullscreen) btnFullscreen.addEventListener('click', toggleFullscreen);
 
@@ -755,6 +796,18 @@
         const slider = document.getElementById('lectureFontSlider');
         if (slider) {
             slider.addEventListener('input', (e) => setFontScale(e.target.value));
+        }
+
+        // Edit button toggle
+        const btnEdit = document.getElementById('btnEditToggle');
+        if (btnEdit) {
+            btnEdit.addEventListener('click', () => {
+                if (typeof window !== 'undefined' && window.DeckEditor) {
+                    window.DeckEditor.toggle();
+                } else {
+                    showToast('Bewerken engine wordt geladen...');
+                }
+            });
         }
 
         // Global Keyboard Shortcuts
@@ -789,6 +842,9 @@
             } else if (e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 setViewMode('lab');
+            } else if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                toggleLightMode();
             } else if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 toggleFullscreen();
@@ -839,8 +895,9 @@
             }
         }
 
-        // Restore saved view mode & font scale
+        // Restore saved view mode, theme mode & font scale
         state.viewMode = safeGet('glr_vr_viewmode', 'lab');
+        state.isLightMode = safeGet('glr_light_mode', 'false') === 'true';
         state.fontScale = parseInt(safeGet('glr_vr_fontscale', '100'), 10) || 100;
 
         // Expose slides to window for DeckEditor integration
@@ -852,6 +909,7 @@
         }
 
         buildDomShell();
+        applyLightMode(state.isLightMode, false);
         renderDrawer();
         setFontScale(state.fontScale);
         setViewMode(state.viewMode);
@@ -910,6 +968,7 @@
     exports.init = init;
     exports.renderSlide = renderSlide;
     exports.setViewMode = setViewMode;
+    exports.toggleLightMode = toggleLightMode;
     exports.setFontScale = setFontScale;
     exports.toggleFullscreen = toggleFullscreen;
     exports.toggleNotes = toggleNotes;

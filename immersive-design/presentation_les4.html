@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les 4: Interactie Bouwen: Vissen, AI en Lijn • Grafisch Lyceum Rotterdam</title>
+    <link rel="stylesheet" href="../scripts/hr_slide_deck.css">
+</head>
+<body data-theme="glr">
+    <!-- Core SlideDeck Library -->
+    <script src="../scripts/hr_slide_deck.js"></script>
+    <script>
+        const slides = [
+  {
+    "isHero": true,
+    "title": "Interactie Bouwen: Vissen, AI en Lijn",
+    "subtitle": "Rondzwemmende vissen, werphengel met LineRenderer en een bijt-systeem",
+    "topics": [
+      "1. <strong>VisAI:</strong> Rondzwemmen tussen punten (ook voor vijand-patrol)",
+      "2. <strong>LineRenderer:</strong> Zichtbare vislijn tussen hengel en dobber (ook voor lasers)",
+      "3. <strong>VisHengel:</strong> Dobber uitgooien met E en terughalen met Spatie",
+      "4. <strong>Happen:</strong> Vis reageert op beweging van de speler"
+    ],
+    "notes": "Welkom bij Les 4. Vandaag bouwen we verder op de C#-basis uit Les 2 met een klein vissysteem. Elke techniek die je vandaag leert gebruik je ook in andere games, zoals een vijand-patrol, werphaak of laser."
+  },
+  {
+    "category": "Start",
+    "title": "Wat Maken We Vandaag?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">3 Herbruikbare Bouwblokken</div><div class=\"info-card-text\"><ul><li><strong>1. VisAI:</strong> Zwemt naar random punten, net als een vijand of NPC.</li><li><strong>2. Hengel en Lijn:</strong> Schiet dobber weg met een lijn, net als een werphaak of laser.</li><li><strong>3. Happen:</strong> Reageert bij langzaam terughalen, net als een vijand op beweging.</li></ul></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Vaste Werkwijze</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Voorspellen:</strong> Lees de code eerst en bespreek wat er gebeurt.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Bouwen:</strong> Zet het object in Unity op en test meteen met Play.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Aanpassen:</strong> Kies Basis, Extra of een eigen game-variant.</div></div></div></div>",
+    "notes": "Leg het doel helder uit: studenten bouwen een compleet minispel in drie losse stappen, maar elke stap is een bouwblok dat ze later in hun eigen game hergebruiken.",
+    "deepdive": {
+      "analogy": "Drie losse legoblokjes die samen een hengelspel vormen, maar ook als laser of vijand passen in een ander spel.",
+      "whatIsWhat": "<strong>Bouwblok:</strong> een klein script met een duidelijke taak dat je ook ergens anders kunt gebruiken.",
+      "differences": "<strong>Alles in een groot script:</strong> wordt snel onoverzichtelijk. <strong>Drie losse scripts:</strong> makkelijk te testen en opnieuw te gebruiken.",
+      "trap": "Alle drie de scripts tegelijk schrijven zonder tussendoor op Play te drukken.",
+      "rule": "Maak eerst Deel 1 werkend in Play voordat je begint aan Deel 2."
+    }
+  },
+  {
+    "category": "Opfrisser",
+    "title": "Opfrisser uit Les 2",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Positie en Snelheid</div><div class=\"info-card-text\">Deze vier onderdelen uit Les 2 gebruik je vandaag steeds opnieuw.<ul><li><strong>Vector3:</strong> Drie getallen (x, y, z) voor een plek in de 3D-wereld.</li><li><strong>Time.deltaTime:</strong> Zorgt voor gelijke snelheid op elke computer.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Keuzes en Toetsen</div><div class=\"info-card-text\"><ul><li><strong>if en bool:</strong> <code>if (a &amp;&amp; !b)</code> voert code uit als <code>a</code> waar is en <code>b</code> niet.</li><li><strong>Keyboard.current:</strong> Toetsen lezen via <code>using UnityEngine.InputSystem;</code>.</li></ul></div></div></div>",
+    "notes": "Kort spiekbriefje uit Les 2. Herinner studenten aan using UnityEngine.InputSystem; bovenaan scripts die toetsen uitlezen.",
+    "deepdive": {
+      "analogy": "Je gereedschapskist uit Les 2: deze vier stukken gereedschap heb je vandaag bij elk onderdeel nodig.",
+      "whatIsWhat": "<strong>Vector3:</strong> positie of richting met x, y en z.<br><strong>bool:</strong> waar (true) of niet waar (false).",
+      "differences": "<strong>wasPressedThisFrame:</strong> een keer waar bij indrukken. <strong>isPressed:</strong> blijft waar zolang je vasthoudt.",
+      "trap": "Time.deltaTime vergeten bij beweging, waardoor een vis of dobber in een flits wegschiet.",
+      "rule": "Vermenigvuldig bewegingssnelheid in Update altijd met Time.deltaTime."
+    }
+  },
+  {
+    "category": "Opzet",
+    "title": "De Scene in 4 Stappen",
+    "images": [
+      {
+        "file": "04-vissen-scene-setup.png",
+        "want": "Unity Scene en Hierarchy met Water, Hengel, HengelTip, Dobber en Vis"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">4 Objecten Klaarzetten</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Water:</strong> Plane op (0, 0, 0), schaal (2, 1, 2), blauw materiaal.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Hengel:</strong> Cube bij de rand met een leeg child <strong>HengelTip</strong> vooraan.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Dobber:</strong> Sphere (schaal 0.2) met een <strong>Rigidbody</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div><strong>Vis:</strong> Cube of Capsule op het water (schaal 0.5, 0.3, 0.8).</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Waarom HengelTip?</div><div class=\"info-card-text\"><strong>HengelTip</strong> markeert precies het uiteinde van de hengel. Daar start de vislijn en daaruit gooi je de dobber.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/04-vissen-scene-setup.png\"><img src=\"img/les4/04-vissen-scene-setup.png\" alt=\"Unity Scene en Hierarchy met Water, Hengel, HengelTip, Dobber en Vis\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Scene en Hierarchy met Water, Hengel, HengelTip, Dobber en Vis</div><code class=\"media-ph-file\">img/les4/04-vissen-scene-setup.png</code></figure></div>",
+    "notes": "Laat studenten eerst de basisscene klaarzetten met eenvoudige primitives. De Plane heeft standaard een MeshCollider, dus de dobber blijft netjes op het water liggen.",
+    "deepdive": {
+      "analogy": "Eerst het podium en de rekwisieten neerzetten voordat de acteurs gaan bewegen.",
+      "whatIsWhat": "<strong>HengelTip:</strong> leeg GameObject als kind van Hengel op de plek waar de draad begint.<br><strong>Rigidbody:</strong> geeft de Dobber gewicht en snelheid.",
+      "differences": "<strong>Hengel:</strong> het hele object. <strong>HengelTip:</strong> precies de punt waar de lijn en worp starten.",
+      "trap": "HengelTip niet als child onder Hengel zetten, waardoor de tip los blijft zweven als je de hengel draait.",
+      "rule": "Zet HengelTip altijd als child-object aan het uiteinde van Hengel."
+    }
+  },
+  {
+    "category": "Deel 1: VisAI",
+    "title": "Deel 1: Hoe Denkt een Simpele AI?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">AI in 3 Stappen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Kies doel:</strong> Pak een random X en Z binnen een vast vak.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Zwem erheen:</strong> Schuif elk frame een stap richting het doel met <code>MoveTowards</code>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Aangekomen:</strong> Afstand kleiner dan 0.3? Kies een nieuw punt.</div></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Niet Alleen voor Vissen</div><div class=\"info-card-text\">Met precies deze drie stappen bouw je ook:<ul><li>Een <strong>vijand</strong> die door een kamer patrouilleert</li><li>Een <strong>dier of NPC</strong> die vrij door een level loopt</li></ul></div></div></div>",
+    "notes": "Leg het idee eerst uit zonder code: kies een punt, loop erheen, kies een nieuw punt. Benadruk dat bijna elke simpele game-AI zo begint.",
+    "deepdive": {
+      "analogy": "Een beveiliger die steeds een willekeurige plek in de hal aanwijst, erheen loopt en dan de volgende plek kiest.",
+      "whatIsWhat": "<strong>Vector3.MoveTowards:</strong> schuift een object stapje voor stapje naar een doel zonder door te schieten.<br><strong>Vector3.Distance:</strong> meet de afstand tussen twee punten.",
+      "differences": "<strong>Vaste route:</strong> altijd dezelfde twee punten. <strong>Random punt:</strong> natuurlijk en onvoorspelbaar gedrag.",
+      "trap": "Controleren op afstand == 0, wat door afrondingsverschillen bijna nooit precies waar wordt.",
+      "rule": "Controleer bij aankomst altijd met Distance kleiner dan een kleine waarde zoals 0.3f."
+    }
+  },
+  {
+    "category": "Deel 1: VisAI",
+    "title": "Voorspel: VisAI.cs (Rondzwemmen)",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Assets/Scripts/VisAI.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n\n<span class=\"kw\">public class</span> <span class=\"type\">VisAI</span> : <span class=\"type\">MonoBehaviour</span> {\n    <span class=\"kw\">public float</span> bereik = 5f;\n    <span class=\"kw\">public float</span> snelheid = 2f;\n    <span class=\"type\">Vector3</span> doel;\n\n    <span class=\"kw\">void</span> <span class=\"fn\">Start</span>() { <span class=\"fn\">KiesNieuwDoel</span>(); }\n    <span class=\"kw\">void</span> <span class=\"fn\">KiesNieuwDoel</span>() {\n        <span class=\"kw\">float</span> x = <span class=\"type\">Random</span>.<span class=\"fn\">Range</span>(-bereik, bereik);\n        <span class=\"kw\">float</span> z = <span class=\"type\">Random</span>.<span class=\"fn\">Range</span>(-bereik, bereik);\n        doel = <span class=\"kw\">new</span> <span class=\"type\">Vector3</span>(x, transform.position.y, z);\n    }\n    <span class=\"kw\">void</span> <span class=\"fn\">Update</span>() {\n        transform.<span class=\"fn\">LookAt</span>(doel);\n        <span class=\"kw\">float</span> stap = snelheid * <span class=\"type\">Time</span>.deltaTime;\n        transform.position = <span class=\"type\">Vector3</span>.<span class=\"fn\">MoveTowards</span>(\n            transform.position, doel, stap);\n        <span class=\"kw\">if</span> (<span class=\"type\">Vector3</span>.<span class=\"fn\">Distance</span>(transform.position, doel) &lt; 0.3f)\n            <span class=\"fn\">KiesNieuwDoel</span>();\n    }\n}</pre></div><div class=\"info-card purple\"><div class=\"info-card-title\">Voorspel Voor Je Test</div><div class=\"info-card-text\"><ul><li>Waar zwemt de vis heen direct bij <code>Start()</code>?</li><li>Waarom blijft <code>transform.position.y</code> in <code>doel</code> gelijk?</li><li>Wanneer kiest de vis een nieuw doelpunt?</li></ul></div></div></div>",
+    "notes": "PRIMM Predict: laat studenten een minuut de code lezen en met hun buurman de drie vragen beantwoorden voordat ze het script overnemen.",
+    "deepdive": {
+      "analogy": "Een zwemmer die met een kompas steeds naar een nieuwe boei op het water kijkt en ernaartoe zwemt.",
+      "whatIsWhat": "<strong>Random.Range(-bereik, bereik):</strong> kiest een willekeurig kommagetal tussen min en plus bereik.<br><strong>transform.LookAt(doel):</strong> draait de voorkant van de vis naar het doel.",
+      "differences": "<strong>transform.position.y houden:</strong> vis blijft op waterhoogte. <strong>Y ook random maken:</strong> vis vliegt de lucht in of zakt weg.",
+      "trap": "KiesNieuwDoel() vergeten in Start(), waardoor de vis in het begin naar (0, 0, 0) zwemt.",
+      "rule": "Roep KiesNieuwDoel() meteen in Start() aan zodat het eerste doel direct klopt."
+    }
+  },
+  {
+    "category": "Deel 1: VisAI",
+    "title": "VisAI Instellen in Unity",
+    "images": [
+      {
+        "file": "07-vis-ai-inspector.png",
+        "want": "Unity Inspector van Vis met VisAI component (bereik en snelheid zichtbaar)"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">VisAI Koppelen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Maak script <code>VisAI.cs</code> aan in <code>Assets/Scripts</code>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Sleep het script op je object <strong>Vis</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Stel in de Inspector <strong>Bereik</strong> (5) en <strong>Snelheid</strong> (2) in.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Test met Play en dupliceer met <strong>Ctrl+D</strong> / <strong>Cmd+D</strong> naar 5 vissen.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Check Je Voorspelling</div><div class=\"info-card-text\">Elke vis kiest direct een eigen punt op dezelfde hoogte en draait bij 0.3 meter afstand naar een nieuw doel.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/07-vis-ai-inspector.png\"><img src=\"img/les4/07-vis-ai-inspector.png\" alt=\"Unity Inspector van Vis met VisAI component (bereik en snelheid zichtbaar)\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Inspector van Vis met VisAI component (bereik en snelheid zichtbaar)</div><code class=\"media-ph-file\">img/les4/07-vis-ai-inspector.png</code></figure></div>",
+    "notes": "Laat iedereen eerst een enkele vis testen. Zodra die goed rondzwemt op het water, dupliceren ze hem naar vijf vissen.",
+    "deepdive": {
+      "analogy": "Een mal maken voor een vis en er meteen vijf kopieen van in de vijver zetten.",
+      "whatIsWhat": "<strong>Ctrl+D / Cmd+D:</strong> dupliceert een geselecteerd GameObject met alle componenten en scripts.",
+      "differences": "<strong>Waarden in code aanpassen:</strong> geldt voor alle vissen. <strong>Waarden in Inspector aanpassen:</strong> elke vis krijgt eigen snelheid.",
+      "trap": "Vergeten dat bereik groter is dan het Water-vlak, waardoor vissen buiten het water zwemmen.",
+      "rule": "Stem Bereik af op de grootte van je Water-vlak zodat vissen binnen de rand blijven."
+    }
+  },
+  {
+    "category": "Deel 1: VisAI",
+    "title": "Opdracht Deel 1: Basis, Extra, Bonus",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Basis en Extra</div><div class=\"info-card-text\"><ul><li><strong>Basis:</strong> Minimaal 3 vissen zwemmen zelfstandig rond binnen het water.</li><li><strong>Extra:</strong> Geef elke vis in de Inspector een eigen <code>snelheid</code> en kleur.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Bonus Uitdaging</div><div class=\"info-card-text\"><ul><li><strong>Bonus:</strong> Laat de vis 1 seconde pauzeren bij elk punt met een timer.</li><li><strong>Hint:</strong> Tel <code>wachtTijd -= Time.deltaTime;</code> af voordat je beweegt.</li></ul></div></div></div>",
+    "notes": "Voor de bonus maken studenten een float wachtTijd; als wachtTijd > 0 tellen ze af met Time.deltaTime en doen return; bij aankomst zetten ze wachtTijd = 1f.",
+    "deepdive": {
+      "analogy": "Een vis die even stilhangt bij een plekje voordat hij verder zwemt.",
+      "whatIsWhat": "<strong>Timer in Update:</strong> een float die elk frame omlaag telt met Time.deltaTime.",
+      "differences": "<strong>Zonder timer:</strong> vis draait meteen om. <strong>Met wacht-timer:</strong> natuurlijk pauzeren bij elk punt.",
+      "trap": "WachtTijd vergeten terug te zetten op 1f wanneer KiesNieuwDoel() wordt aangeroepen.",
+      "rule": "Tel een timer elk frame af met Time.deltaTime en check of hij kleiner of gelijk aan 0 is."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Deel 2: Wat Is een LineRenderer?",
+    "images": [
+      {
+        "file": "09-line-renderer-inspector.png",
+        "want": "Unity Inspector van LineRenderer met Width 0.02 en 2 posities"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Lijn Tussen Twee Punten</div><div class=\"info-card-text\"><ul><li><strong>LineRenderer:</strong> Tekent een strakke lijn tussen twee of meer punten.</li><li><strong>Instellen:</strong> Zet <strong>Positions</strong> op <code>2</code> en <strong>Width</strong> op <code>0.02</code>.</li><li><strong>Materiaal:</strong> Geef een materiaal mee, anders wordt de lijn knalroze.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Meer dan Visdraad</div><div class=\"info-card-text\">Hetzelfde component gebruik je ook voor een <strong>laserstraal</strong>, een <strong>werphaak</strong> of een <strong>touw</strong> tussen twee objecten.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/09-line-renderer-inspector.png\"><img src=\"img/les4/09-line-renderer-inspector.png\" alt=\"Unity Inspector van LineRenderer met Width 0.02 en 2 posities\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Inspector van LineRenderer met Width 0.02 en 2 posities</div><code class=\"media-ph-file\">img/les4/09-line-renderer-inspector.png</code></figure></div>",
+    "notes": "Laat zien waarom een LineRenderer zonder materiaal roze is in Unity (ontbrekende shader/material). Laat ze direct een simpel wit of lichtgrijs materiaal kiezen.",
+    "deepdive": {
+      "analogy": "Een elastiek dat je strak spant tussen twee spelden op een prikbord.",
+      "whatIsWhat": "<strong>LineRenderer:</strong> component dat punten in 3D verbindt met een zichtbare streep.<br><strong>Positions:</strong> lijst met index 0 (begin) en index 1 (eind).",
+      "differences": "<strong>3D Cylinder als lijn:</strong> lastig schalen en draaien. <strong>LineRenderer:</strong> alleen begin- en eindpunt doorgeven.",
+      "trap": "Use World Space uitvinken of het materiaal vergeten (geeft een knalroze lijn).",
+      "rule": "Geef een LineRenderer altijd meteen een materiaal en laat Use World Space aangevinkt."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Code: VisLijn.cs",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Assets/Scripts/VisLijn.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n\n<span class=\"kw\">public class</span> <span class=\"type\">VisLijn</span> : <span class=\"type\">MonoBehaviour</span> {\n    <span class=\"kw\">public</span> <span class=\"type\">LineRenderer</span> lijn;\n    <span class=\"kw\">public</span> <span class=\"type\">Transform</span> hengelTip;\n    <span class=\"kw\">public</span> <span class=\"type\">Transform</span> dobber;\n\n    <span class=\"kw\">void</span> <span class=\"fn\">Update</span>() {\n        lijn.<span class=\"fn\">SetPosition</span>(0, hengelTip.position);\n        lijn.<span class=\"fn\">SetPosition</span>(1, dobber.position);\n    }\n}</pre></div><div class=\"info-card\"><div class=\"info-card-title\">Regel voor Regel</div><div class=\"info-card-text\"><ul><li><strong>Punt 0:</strong> De plek van <code>hengelTip</code> (start van de lijn).</li><li><strong>Punt 1:</strong> De plek van <code>dobber</code> (einde van de lijn).</li><li><strong>Update():</strong> Zet beide punten elk frame opnieuw vast.</li></ul></div></div></div>",
+    "notes": "Dit script is expres heel kort en overzichtelijk. Benadruk dat 0 altijd het eerste punt is in programmeren en 1 het tweede punt.",
+    "deepdive": {
+      "analogy": "Twee punaises verplaatsen terwijl het touwtje ertussen automatisch meebeweegt.",
+      "whatIsWhat": "<strong>SetPosition(index, Vector3):</strong> zet een punt van de LineRenderer op een 3D-coördinaat.",
+      "differences": "<strong>Alleen in Start() zetten:</strong> lijn blijft bevroren hangen. <strong>In Update() zetten:</strong> lijn volgt dobber en hengel continu.",
+      "trap": "SetPosition(1, ...) aanroepen terwijl Positions in de Inspector nog op 0 of 1 staat (geeft een IndexOutOfRange fout).",
+      "rule": "Zet Positions op 2 in de Inspector voordat je punt 0 en punt 1 instelt."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Dobber Uitgooien en Terughalen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">3 Fases van de Worp</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Uitgooien (E):</strong> Zet dobber vooraan en geef een zet met <code>AddForce</code>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Terughalen (Spatie):</strong> Zet <code>trektTerug = true</code> en schuif terug met <code>MoveTowards</code>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Bij hengel:</strong> Afstand kleiner dan 0.4? Zet <code>inWater = false</code> voor nieuwe worp.</div></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Waarom Bool Flags?</div><div class=\"info-card-text\">Met <code>inWater</code> en <code>trektTerug</code> weet het vis-script precies wat de speler op dat moment doet.</div></div></div>",
+    "notes": "Leg uit waarom we zowel AddForce als MoveTowards gebruiken: bij het gooien willen we een boog door de lucht (fysica), bij het inhalen willen we een vaste rustige snelheid.",
+    "deepdive": {
+      "analogy": "De worp is een bal gooien; het terughalen is een touw rustig naar je toe trekken.",
+      "whatIsWhat": "<strong>AddForce(..., ForceMode.Impulse):</strong> geeft een directe zet aan een Rigidbody.<br><strong>trektTerug:</strong> bool die aangeeft of de speler nu Spatie inhoudt.",
+      "differences": "<strong>Alleen AddForce gebruiken:</strong> lastig precies naar de hengel richten. <strong>MoveTowards bij terughalen:</strong> komt netjes bij HengelTip aan.",
+      "trap": "Altijd kunnen gooien met E terwijl de dobber nog in het water ligt, als je vergeet te checken op !inWater.",
+      "rule": "Gebruik bools zoals inWater om bij te houden in welke fase de actie zit."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Code: VisHengel.cs",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Assets/Scripts/VisHengel.cs</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"kw\">using</span> <span class=\"type\">UnityEngine</span>;\n<span class=\"kw\">using</span> <span class=\"type\">UnityEngine.InputSystem</span>;\n\n<span class=\"kw\">public class</span> <span class=\"type\">VisHengel</span> : <span class=\"type\">MonoBehaviour</span> {\n    <span class=\"kw\">public</span> <span class=\"type\">Transform</span> hengelTip;\n    <span class=\"kw\">public</span> <span class=\"type\">Rigidbody</span> dobber;\n    <span class=\"kw\">public float</span> worpKracht = 6f;\n    <span class=\"kw\">public float</span> terugSnelheid = 1.5f;\n    <span class=\"kw\">public bool</span> inWater, trektTerug;\n\n    <span class=\"kw\">void</span> <span class=\"fn\">Update</span>() {\n        <span class=\"comm\">// 1. Uitgooien</span>\n        <span class=\"kw\">if</span> (<span class=\"type\">Keyboard</span>.current.eKey.wasPressedThisFrame\n            &amp;&amp; !inWater) {\n            dobber.isKinematic = <span class=\"kw\">false</span>;\n            dobber.linearVelocity = <span class=\"type\">Vector3</span>.zero;\n            dobber.position = hengelTip.position;\n            dobber.<span class=\"fn\">AddForce</span>(\n                (hengelTip.forward + <span class=\"type\">Vector3</span>.up) * worpKracht,\n                <span class=\"type\">ForceMode</span>.Impulse);\n            inWater = <span class=\"kw\">true</span>;\n        }\n        <span class=\"comm\">// 2. Langzaam terughalen</span>\n        trektTerug = inWater\n            &amp;&amp; <span class=\"type\">Keyboard</span>.current.spaceKey.isPressed;\n        <span class=\"kw\">if</span> (!trektTerug) <span class=\"kw\">return</span>;\n        dobber.isKinematic = <span class=\"kw\">true</span>;\n        <span class=\"kw\">float</span> stap = terugSnelheid * <span class=\"type\">Time</span>.deltaTime;\n        dobber.position = <span class=\"type\">Vector3</span>.<span class=\"fn\">MoveTowards</span>(\n            dobber.position, hengelTip.position, stap);\n        <span class=\"kw\">if</span> (<span class=\"type\">Vector3</span>.<span class=\"fn\">Distance</span>(\n            dobber.position, hengelTip.position) &lt; 0.4f)\n            inWater = <span class=\"kw\">false</span>;\n    }\n}</pre></div><div class=\"info-card cyan\"><div class=\"info-card-title\">Belangrijke Details</div><div class=\"info-card-text\"><ul><li><strong>linearVelocity:</strong> Zet oude beweging op nul voor een strakke worp.</li><li><strong>isKinematic:</strong> Zet zwaartekracht tijdelijk uit tijdens het terughalen.</li><li><strong>Spatie:</strong> Gebruik <code>isPressed</code> om ingedrukt te houden.</li></ul></div></div></div>",
+    "notes": "Wijs op de twee Unity 6 punten: linearVelocity (niet het oude velocity) en Keyboard.current uit UnityEngine.InputSystem. Zorg dat isKinematic = false staat voordat linearVelocity wordt gereset.",
+    "deepdive": {
+      "analogy": "Bij het gooien laat je de zwaartekracht zijn werk doen; bij het binnenhalen trek je zelf aan de lijn.",
+      "whatIsWhat": "<strong>linearVelocity:</strong> huidige snelheid en richting van een Rigidbody in Unity 6.<br><strong>isKinematic:</strong> laat script-positie voorgaan op zwaartekracht.",
+      "differences": "<strong>wasPressedThisFrame (E):</strong> een keer gooien bij indrukken. <strong>isPressed (Spatie):</strong> blijven intrekken zolang je vasthoudt.",
+      "trap": "linearVelocity instellen terwijl isKinematic nog true is (geeft een waarschuwing in Unity 6).",
+      "rule": "Zet eerst isKinematic op false voordat je linearVelocity of AddForce gebruikt."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Hengel Koppelen in Unity",
+    "images": [
+      {
+        "file": "13-vishengel-inspector.png",
+        "want": "Unity Inspector van Hengel met gekoppelde HengelTip, Dobber en LineRenderer"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Koppelen in 4 Stappen</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Voeg <strong>LineRenderer</strong> toe aan <strong>Hengel</strong> (Positions: 2, Width: 0.02, materiaal).</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Zet <code>VisHengel.cs</code> en <code>VisLijn.cs</code> op <strong>Hengel</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Sleep <strong>HengelTip</strong>, <strong>Dobber</strong> en <strong>LineRenderer</strong> in de velden.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Test in Play: gooi met <strong>E</strong> en haal op met <strong>Spatie</strong>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Let Op Het Type</div><div class=\"info-card-text\"><code>VisHengel</code> vraagt bij <strong>Dobber</strong> om een <code>Rigidbody</code>. Sleep dus het Dobber-object met Rigidbody in het vakje.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/13-vishengel-inspector.png\"><img src=\"img/les4/13-vishengel-inspector.png\" alt=\"Unity Inspector van Hengel met gekoppelde HengelTip, Dobber en LineRenderer\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Inspector van Hengel met gekoppelde HengelTip, Dobber en LineRenderer</div><code class=\"media-ph-file\">img/les4/13-vishengel-inspector.png</code></figure></div>",
+    "notes": "Controleer of de voorzijde (blauwe Z-pijl) van HengelTip naar het water wijst. Anders vliegt de dobber achteruit.",
+    "deepdive": {
+      "analogy": "Alle stekkers op het juiste stopcontact aansluiten voordat je het apparaat aanzet.",
+      "whatIsWhat": "<strong>hengelTip.forward:</strong> de blauwe Z-as richting van het HengelTip-object in de Scene.",
+      "differences": "<strong>Z-as richting water:</strong> dobber landt in de vijver. <strong>Z-as verkeerd gedraaid:</strong> dobber vliegt de andere kant op.",
+      "trap": "De dobber vliegt achteruit omdat Hengel of HengelTip 180 graden gedraaid staat.",
+      "rule": "Kijk naar de blauwe Z-pijl (Local mode) van HengelTip om te zien waar de worp heen gaat."
+    }
+  },
+  {
+    "category": "Deel 2: Hengel",
+    "title": "Opdracht Deel 2: Basis, Extra, Bonus",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Basis en Extra</div><div class=\"info-card-text\"><ul><li><strong>Basis:</strong> Dobber gooien met <strong>E</strong>, strakke lijn zichtbaar, terughalen met <strong>Spatie</strong>.</li><li><strong>Extra:</strong> Maak de lijn geel als <code>trektTerug</code> waar is met <code>lijn.startColor = Color.yellow;</code>.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Bonus Uitdaging</div><div class=\"info-card-text\"><ul><li><strong>Bonus:</strong> Gebruik <code>VisLijn</code> en <code>VisHengel</code> als een <strong>werphaak</strong> of <strong>trekstraal</strong> in je eigen game.</li><li><strong>Tip:</strong> Laat <code>hengelTip</code> naar je camera of hand wijzen.</li></ul></div></div></div>",
+    "notes": "Voor Extra geven studenten VisLijn.cs een public VisHengel hengel; veld zodat hij kan zien of hengel.trektTerug waar is (geel) of niet (wit).",
+    "deepdive": {
+      "analogy": "Een visdraad die oplicht zodra er spanning op de lijn staat.",
+      "whatIsWhat": "<strong>startColor / endColor:</strong> de kleur van begin- en eindpunt van een LineRenderer.",
+      "differences": "<strong>Alleen startColor aanpassen:</strong> geeft een kleurverloop. <strong>StartColor en endColor samen:</strong> hele lijn heeft een vaste kleur.",
+      "trap": "Kleur aanpassen zonder dat het materiaal van de LineRenderer vertex-kleuren ondersteunt (kies Default-Line of Sprites/Default).",
+      "rule": "Gebruik een simpel standaardmateriaal zoals Sprites/Default als je LineRenderer van kleur laat wisselen."
+    }
+  },
+  {
+    "category": "Deel 3: Happen",
+    "title": "Deel 3: Wanneer Hapt een Vis?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Drie Voorwaarden met &amp;&amp;</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>In het water:</strong> <code>hengel.inWater</code> moet <code>true</code> zijn.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Langzaam bewegen:</strong> <code>hengel.trektTerug</code> is <code>true</code> (Spatie ingedrukt).</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Dichtbij genoeg:</strong> Afstand tot de dobber is kleiner dan <code>lokAfstand</code>.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Voor Andere Games</div><div class=\"info-card-text\">Vervang de vis door een <strong>vijand</strong> en de dobber door de <strong>speler</strong>: een vijand valt alleen aan als jij beweegt en dichtbij bent.</div></div></div>",
+    "notes": "Laat studenten zien hoe && meerdere voorwaarden tegelijk eist. Zonder Spatie beweegt het aas niet, dus de vis negeert de dobber.",
+    "deepdive": {
+      "analogy": "Een kat die een speelgoedmuis alleen achterna zit als de muis in de kamer ligt, beweegt en dichtbij genoeg is.",
+      "whatIsWhat": "<strong>&amp;&amp; (EN):</strong> alle drie de voorwaarden moeten tegelijk waar zijn om naar de dobber te zwemmen.",
+      "differences": "<strong>Alleen afstand checken:</strong> vis zwemt altijd op de speler af. <strong>Ook trektTerug checken:</strong> reageert pas op actie van de speler.",
+      "trap": "|| (OF) gebruiken in plaats van && (EN), waardoor de vis ook vanaf de andere kant van het meer komt.",
+      "rule": "Gebruik && wanneer alle voorwaarden tegelijk moeten kloppen."
+    }
+  },
+  {
+    "category": "Deel 3: Happen",
+    "title": "Code: Vis Lokken en Happen",
+    "contentHtml": "<div class=\"content-col\"><div class=\"code-container\"><div class=\"code-header\"><span>Assets/Scripts/VisAI.cs (uitbreiding)</span><button class=\"code-copy-btn\" onclick=\"copyCode(this)\">Kopieer</button></div><pre><span class=\"comm\">// Voeg bovenin VisAI.cs toe:</span>\n<span class=\"kw\">public</span> <span class=\"type\">VisHengel</span> hengel;\n<span class=\"kw\">public float</span> lokAfstand = 3f;\n<span class=\"kw\">bool</span> gevangen;\n\n<span class=\"kw\">void</span> <span class=\"fn\">Update</span>() {\n    <span class=\"kw\">if</span> (gevangen) <span class=\"kw\">return</span>;\n    <span class=\"kw\">float</span> afstand = <span class=\"type\">Vector3</span>.<span class=\"fn\">Distance</span>(\n        transform.position, hengel.dobber.position);\n    <span class=\"kw\">if</span> (hengel.inWater &amp;&amp; hengel.trektTerug\n        &amp;&amp; afstand &lt; lokAfstand) {\n        doel = hengel.dobber.position;\n        <span class=\"kw\">if</span> (afstand &lt; 0.4f) {\n            <span class=\"comm\">// VUL IN: hap vast aan de dobber</span>\n        }\n    } <span class=\"kw\">else if</span> (<span class=\"type\">Vector3</span>.<span class=\"fn\">Distance</span>(\n        transform.position, doel) &lt; 0.3f) {\n        <span class=\"fn\">KiesNieuwDoel</span>();\n    }\n    transform.<span class=\"fn\">LookAt</span>(doel);\n    <span class=\"kw\">float</span> stap = snelheid * <span class=\"type\">Time</span>.deltaTime;\n    transform.position = <span class=\"type\">Vector3</span>.<span class=\"fn\">MoveTowards</span>(\n        transform.position, doel, stap);\n}</pre></div><div class=\"info-card purple\"><div class=\"info-card-title\">Maak de Hap-Regel Af</div><div class=\"info-card-text\"><ul><li>Zet <code>gevangen = true;</code> onder <code>// VUL IN:</code></li><li>Koppel vast: <code>transform.SetParent(hengel.dobber.transform);</code></li><li>Log <code>Debug.Log(\"Beet!\");</code> en sleep <strong>Hengel</strong> in Inspector</li></ul></div></div></div>",
+    "notes": "Faded worked example: studenten bouwen voort op hun eigen VisAI.cs en vullen zelf de drie hap-regels in. Vergeet niet in de Inspector het Hengel-object in het nieuwe veld Hengel van elke vis te slepen.",
+    "deepdive": {
+      "analogy": "De vis stopt met zelf zoeken en houdt het haakje vast zodat de dobber hem meeneemt.",
+      "whatIsWhat": "<strong>transform.SetParent(doel):</strong> maakt de vis kind van de dobber, zodat hij automatisch meebeweegt.<br><strong>if (gevangen) return;:</strong> stopt het AI-zoekgedrag zodra er beet is.",
+      "differences": "<strong>Zonder gevangen return:</strong> de vis blijft proberen weg te zwemmen terwijl hij vastzit. <strong>Met gevangen return:</strong> hangt rustig mee.",
+      "trap": "Het veld Hengel op een van de vissen leeg laten in de Inspector (geeft NullReferenceException).",
+      "rule": "Zet altijd gevangen = true voordat je de vis als child aan de dobber vastzet."
+    }
+  },
+  {
+    "category": "Deel 3: Happen",
+    "title": "Testen: Vis Zwemt naar Dobber",
+    "images": [
+      {
+        "file": "17-vis-hapt-gameview.png",
+        "want": "Unity Game View tijdens Play mode met vishengel, zichtbare vislijn, dobber in water en vis die naar de dobber zwemt"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Wat Zie Je?</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Gooi uit met <strong>E</strong>; vissen zwemmen rustig rond.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Houd <strong>Spatie</strong> vast; een vis binnen bereik draait ernaartoe.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Binnen 0.4 meter verschijnt <code>Beet!</code> in de Console.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>De vis hangt vast en komt mee.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Waarom SetParent?</div><div class=\"info-card-text\"><code>SetParent</code> maakt de vis een child van de dobber. Hij beweegt automatisch mee zonder extra code.</div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/17-vis-hapt-gameview.png\"><img src=\"img/les4/17-vis-hapt-gameview.png\" alt=\"Unity Game View tijdens Play mode met vishengel, zichtbare vislijn, dobber in water en vis die naar de dobber zwemt\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Game View tijdens Play mode met vishengel, zichtbare vislijn, dobber in water en vis die naar de dobber zwemt</div><code class=\"media-ph-file\">img/les4/17-vis-hapt-gameview.png</code></figure></div>",
+    "notes": "Test samen met de klas. Als de vis al rondzwemt voordat de speler op Spatie drukt, blijft hij eerst negeren; pas bij langzaam terughalen hapt hij toe.",
+    "deepdive": {
+      "analogy": "Een sleutelhanger aan een sleutelbos: als je de sleutelbos optilt, gaat elke hanger vanzelf mee.",
+      "whatIsWhat": "<strong>Child-object in Unity:</strong> volgt automatisch de positie en draaiing van zijn parent.",
+      "differences": "<strong>Positie elke frame kopieren:</strong> extra code en kans op trillen. <strong>SetParent eenmaal aanroepen:</strong> Unity regelt de beweging direct.",
+      "trap": "Vergeten Hengel te koppelen in de Inspector van alle gedupliceerde vissen.",
+      "rule": "Test eerst met een vis en kopieer het gevulde prefab of object daarna pas."
+    }
+  },
+  {
+    "category": "Deel 3: Happen",
+    "title": "Opdracht Deel 3: Basis, Extra, Bonus",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Basis en Extra</div><div class=\"info-card-text\"><ul><li><strong>Basis:</strong> Vul de hap-regel in zodat de vis meebeweegt met de dobber.</li><li><strong>Extra:</strong> Tel +1 op bij een score (zoals Les 2) of speel een geluid af bij beet.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">Bonus Uitdaging</div><div class=\"info-card-text\"><ul><li><strong>Bonus A:</strong> Laat de vis los (<code>SetParent(null)</code>) als je te snel trekt.</li><li><strong>Bonus B:</strong> Maak een vijand die pas aanvalt als de speler beweegt.</li></ul></div></div></div>",
+    "notes": "Studenten die klaar zijn kiezen Extra of een van de twee Bonus-varianten. Bonus B laat direct zien hoe dit patroon naar andere games overspringt.",
+    "deepdive": {
+      "analogy": "Na het basisrecept kies je een topping of maak je hetzelfde gerecht met andere ingredienten.",
+      "whatIsWhat": "<strong>SetParent(null):</strong> maakt het object weer los van zijn parent zodat het vrij in de Hierarchy staat.",
+      "differences": "<strong>Vissen vangen:</strong> beloning bij langzaam bewegen. <strong>Vijand-reactie:</strong> gevaar bij te snel bewegen.",
+      "trap": "Bij loslaten vergeten ook gevangen = false te zetten, waardoor de vis stil blijft liggen.",
+      "rule": "Zet bij loslaten zowel SetParent(null) als gevangen = false terug."
+    }
+  },
+  {
+    "category": "Hulp",
+    "title": "Top 4 Fouten Zelf Oplossen",
+    "images": [
+      {
+        "file": "19-console-en-scene-check.png",
+        "want": "Unity Console met schone Beet melding en Scene overzicht zonder rode fouten"
+      }
+    ],
+    "contentHtml": "<div class=\"content-col text-stack\"><div class=\"content-col\"><div class=\"info-card red\"><div class=\"info-card-title\">Lijn en Inspector Fouten</div><div class=\"info-card-text\"><ul><li><strong>Roze lijn:</strong> Geef de <code>LineRenderer</code> een materiaal in de Inspector.</li><li><strong>NullReferenceException:</strong> Een veld is leeg. Sleep <strong>HengelTip</strong>, <strong>Dobber</strong> of <strong>Hengel</strong> erin.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card amber\"><div class=\"info-card-title\">Beweging en Toetsen</div><div class=\"info-card-text\"><ul><li><strong>Vis vliegt omhoog:</strong> Houd <code>doel.y = transform.position.y</code> aan in <code>KiesNieuwDoel()</code>.</li><li><strong>Toetsen doen niets:</strong> Klik in het <strong>Game-venster</strong> en check <code>using UnityEngine.InputSystem;</code>.</li></ul></div></div></div></div><div class=\"content-col media-col\"><figure class=\"media-fig media-placeholder\" data-img=\"img/les4/19-console-en-scene-check.png\"><img src=\"img/les4/19-console-en-scene-check.png\" alt=\"Unity Console met schone Beet melding en Scene overzicht zonder rode fouten\" onload=\"this.parentNode.classList.remove('media-placeholder')\" onerror=\"this.remove()\"><div class=\"media-ph-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M4 8h3l1.5-2h7L17 8h3v11H4z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/></svg></div><div class=\"media-ph-text\">Unity Console met schone Beet melding en Scene overzicht zonder rode fouten</div><code class=\"media-ph-file\">img/les4/19-console-en-scene-check.png</code></figure></div>",
+    "notes": "Laat deze hulpslide gerust openstaan tijdens de werktijd zodat studenten deze vier veelgemaakte fouten zelfstandig kunnen oplossen.",
+    "deepdive": {
+      "analogy": "Een korte storingskaart met de vier meest voorkomende storingen en meteen de oplossing.",
+      "whatIsWhat": "<strong>NullReferenceException:</strong> een public variabele in een script wijst nog nergens naar.",
+      "differences": "<strong>Fout voor Play:</strong> typefout in code. <strong>Fout tijdens Play:</strong> leeg vakje in de Inspector.",
+      "trap": "Velden invullen terwijl Play Mode nog aanstaat, waardoor alles verdwijnt als Play stopt.",
+      "rule": "Zet altijd eerst Play uit voordat je velden in de Inspector sleept of aanpast."
+    }
+  },
+  {
+    "category": "Checkpoint",
+    "title": "Checkpoint: Werkt Je Vissysteem?",
+    "contentHtml": "<div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Check Deze 4 Punten</div><div class=\"step-item\"><div class=\"step-num\">1</div><div><strong>Rondzwemmen:</strong> Meerdere vissen zwemmen zelfstandig.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div><strong>Werpen:</strong> E gooit de dobber weg met een strakke lijn.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div><strong>Terughalen:</strong> Spatie trekt de dobber rustig terug.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div><strong>Happen:</strong> Vis hapt bij Spatie; Console blijft leeg.</div></div></div></div><div class=\"content-col\"><div class=\"info-card cyan\"><div class=\"info-card-title\">Alles Groen?</div><div class=\"info-card-text\">Werken alle vier de checks? Maak dan eerst een kleine commit in GitHub Desktop voordat je verder bouwt.</div></div></div>",
+    "notes": "Loop langs alle werkplekken en check deze 4 punten. Help wie nog op een onderdeel vastzit voordat studenten verder uitbreiden.",
+    "deepdive": {
+      "analogy": "Een korte proefvaart voordat je de boot verder gaat aankleden.",
+      "whatIsWhat": "<strong>Schone Console:</strong> geen rode foutmeldingen en geen gele waarschuwingen tijdens Play.",
+      "differences": "<strong>Ongeveer werkend:</strong> hapert of geeft af en toe rood. <strong>Checkpoint gehaald:</strong> alle 4 de stappen werken schoon.",
+      "trap": "Nieuwe extra features toevoegen terwijl een onderdeel nog een NullReferenceException geeft.",
+      "rule": "Los eerst alle rode fouten in de Console op voordat je uitbreidingen bouwt."
+    }
+  },
+  {
+    "category": "Werktijd",
+    "title": "Werktijd: Bouw Verder op Jouw Niveau",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">Kies Je Niveau</div><div class=\"info-card-text\"><ul><li><strong>Basis:</strong> Maak alle drie de bouwblokken werkend in jouw eigen scene.</li><li><strong>Extra:</strong> Voeg score, geluid of meerdere vissoorten toe.</li><li><strong>Bonus:</strong> Bouw een niet-vis variant zoals vijand-patrol of werphaak.</li></ul></div></div></div><div class=\"content-col\"><div class=\"info-card purple\"><div class=\"info-card-title\">GitHub Werkwijze</div><div class=\"info-card-text\"><ul><li>Werk op je eigen <code>feature/</code> branch in GitHub Desktop.</li><li>Maak <strong>1 kleine commit</strong> per werkend onderdeel en test elke stap.</li></ul></div></div></div>",
+    "notes": "Gebruik de overige lestijd om de code toe te passen in hun eigen project. Herinner studenten aan kleine commits per werkend onderdeel.",
+    "deepdive": {
+      "analogy": "De bouwstenen staan klaar; nu zet je ze in je eigen spelwereld op de plek die bij jouw idee past.",
+      "whatIsWhat": "<strong>Feature branch:</strong> jouw eigen werkspoor in Git zodat je teamgenoten niet hindert.",
+      "differences": "<strong>Alles in een mega-commit:</strong> onduidelijk bij fouten. <strong>Commit per onderdeel:</strong> makkelijk terug te draaien.",
+      "trap": "Uren werken in Unity zonder tussendoor op te slaan en te committen.",
+      "rule": "Sla je scene op en maak een kleine commit zodra een onderdeel werkt."
+    }
+  },
+  {
+    "category": "Afronding",
+    "title": "Samenvatting en Afsluiten",
+    "contentHtml": "<div class=\"content-col\"><div class=\"info-card\"><div class=\"info-card-title\">3 Herbruikbare Bouwblokken</div><div class=\"info-card-text\"><ul><li><strong>Random AI:</strong> <code>MoveTowards</code> en <code>Random.Range</code> voor vissen of vijanden.</li><li><strong>LineRenderer:</strong> Twee <code>Transform</code> punten koppelen voor lijn of laser.</li><li><strong>Gedragsreactie:</strong> Voorwaarden met <code>&amp;&amp;</code> en <code>SetParent</code>.</li></ul></div></div></div><div class=\"content-col\"><div class=\"steps-card\"><div class=\"info-card-title\">Checklist Voor Je Sluit</div><div class=\"step-item\"><div class=\"step-num\">1</div><div>Sla je scene op in Unity met <strong>Ctrl+S</strong> / <strong>Cmd+S</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">2</div><div>Bekijk je gewijzigde bestanden in <strong>GitHub Desktop</strong>.</div></div><div class=\"step-item\"><div class=\"step-num\">3</div><div>Maak een commit op je eigen <code>feature/</code> branch.</div></div><div class=\"step-item\"><div class=\"step-num\">4</div><div>Klik op <strong>Push origin</strong> en open een Pull Request als het af is.</div></div></div></div>",
+    "notes": "Sluit vijf minuten voor het einde af. Check of het sterretje naast de scenenaam weg is (opgeslagen) en iedereen gepusht heeft in GitHub Desktop.",
+    "deepdive": {
+      "analogy": "Je gereedschap opruimen en je werk veilig opbergen voordat de deur op slot gaat.",
+      "whatIsWhat": "<strong>Push origin:</strong> zet jouw lokale commits veilig op GitHub.<br><strong>Pull Request:</strong> voorstel om jouw feature branch samen te voegen met main.",
+      "differences": "<strong>Alleen Ctrl+S:</strong> staat alleen op jouw laptop. <strong>Commit en Push:</strong> veilig opgeslagen voor het hele team.",
+      "trap": "Laptop dichtklappen terwijl de scene in Unity nog een sterretje (*) heeft en niet is opgeslagen.",
+      "rule": "Eerst Ctrl+S / Cmd+S in Unity, daarna pas committen en pushen in GitHub Desktop."
+    }
+  }
+];
+
+        SlideDeck.init({
+            theme: 'glr',
+            trackTitle: "MBO Traject Immersive Design • Virtual Reality & XR",
+            lessonNumber: 4,
+            lessonTitle: "Interactie Bouwen: Vissen, AI en Lijn",
+            prevLessonUrl: "presentation_les3.html",
+            nextLessonUrl: "presentation_les5.html",
+            overviewUrl: 'index.html',
+            slides: slides
+        });
+    </script>
+</body>
+</html>
